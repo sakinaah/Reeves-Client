@@ -5,12 +5,11 @@ import com.reevesclient.core.util.ColorUtil;
 import com.reevesclient.core.util.RenderUtil;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.option.KeyBinding;
 
 /** Classic WASD + Space + Sneak keystroke display. */
 public class KeystrokesHUD extends HUDElement {
 
-    private boolean w, a, s, d, space, sneak;
+    private boolean w, a, s, d, space;
 
     public KeystrokesHUD() {
         super("keystrokes", "Keystrokes", 0.44f, 0.77f);
@@ -24,7 +23,6 @@ public class KeystrokesHUD extends HUDElement {
         s     = client.options.backKey.isPressed();
         d     = client.options.rightKey.isPressed();
         space = client.options.jumpKey.isPressed();
-        sneak = client.options.sneakKey.isPressed();
     }
 
     @Override
@@ -42,7 +40,7 @@ public class KeystrokesHUD extends HUDElement {
     }
 
     private void drawKey(DrawContext ctx, int x, int y, int w, String label, boolean pressed) {
-        int bgColor  = pressed ? applyOpacity(ColorUtil.RC_ACCENT) : applyOpacity(0x66000000);
+        int bgColor  = pressed ? themedAccent(ColorUtil.RC_ACCENT) : applyOpacity(0x66000000);
         int txtColor = applyOpacity(0xFFFFFFFF);
 
         RenderUtil.fillRoundedRect(ctx, x, y, w, 14, 3, bgColor);

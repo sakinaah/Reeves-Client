@@ -1,7 +1,6 @@
 package com.reevesclient.modules.hud;
 
 import com.reevesclient.core.hud.HUDElement;
-import com.reevesclient.core.util.ColorUtil;
 import com.reevesclient.core.util.RenderUtil;
 import com.reevesclient.core.util.TextUtil;
 import net.minecraft.client.MinecraftClient;
@@ -46,7 +45,7 @@ public class PotionEffectsHUD extends HUDElement {
 
         int y = 0;
         for (EffectData e : effects) {
-            int color = e.beneficial ? ColorUtil.RC_SUCCESS : ColorUtil.RC_ERROR;
+            int color = e.beneficial ? 0xFF4CAF50 : 0xFFE53935;
             String amplStr = e.amplifier > 0 ? " " + toRoman(e.amplifier + 1) : "";
             String dur     = formatDuration(e.durationTicks);
             String line    = e.name + amplStr + " (" + dur + ")";

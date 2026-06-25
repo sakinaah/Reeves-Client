@@ -27,7 +27,6 @@ public class CapeEditorScreen extends Screen {
     private CapeManager capeManager;
 
     private int selectedProfileIndex = 0;
-    private float previewRotation = 0f;
 
     public CapeEditorScreen(Screen parent) {
         super(Text.literal("Cape Manager"));
@@ -70,7 +69,6 @@ public class CapeEditorScreen extends Screen {
         renderCapePreview(ctx, px + 170, py + 50, pw - 180, ph - 60);
 
         super.render(ctx, mouseX, mouseY, delta);
-        previewRotation += delta * 0.5f;
     }
 
     private void renderProfileList(DrawContext ctx, int x, int y, int w, int h) {
@@ -82,10 +80,14 @@ public class CapeEditorScreen extends Screen {
         for (int i = 0; i < profiles.size(); i++) {
             CapeProfile prof = profiles.get(i);
             boolean sel = i == selectedProfileIndex;
+            boolean active = capeManager.getActiveProfile() == prof;
             if (sel) ctx.fill(x, iy, x + w, iy + 22, ColorUtil.RC_SURFACE);
             if (sel) ctx.fill(x, iy, x + 2, iy + 22, ColorUtil.RC_ACCENT);
             RenderUtil.drawText(ctx, prof.getName(), x + 8, iy + 7,
-                    sel ? ColorUtil.RC_TEXT : ColorUtil.RC_TEXT_MUTED);
+                    active ? ColorUtil.RC_TEXT : sel ? ColorUtil.RC_TEXT : ColorUtil.RC_TEXT_MUTED);
+            if (active) {
+                RenderUtil.drawText(ctx, "Active", x + w - 46, iy + 7, ColorUtil.RC_SUCCESS);
+            }
             iy += 24;
         }
     }
@@ -146,7 +148,9 @@ public class CapeEditorScreen extends Screen {
     }
 
     private void createProfile() {
-        capeManager.createProfile("Cape " + (capeManager.getProfiles().size() + 1));
+        CapeProfile profile = capeManager.createProfile("Cape " + (capeManager.getProfiles().size() + 1));
+        selectedProfileIndex = capeManager.getProfiles().indexOf(profile);
+        capeManager.setActiveProfile(profile);
     }
 
     @Override

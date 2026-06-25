@@ -19,17 +19,17 @@ public class WeatherHUD extends HUDElement {
     @Override
     public void onTick(MinecraftClient client) {
         ClientWorld world = client.world;
-        if (world == null) { weather = "Unknown"; weatherColor = ColorUtil.RC_TEXT_MUTED; return; }
+        if (world == null) { weather = "Unknown"; weatherColor = getMutedTextColor(); return; }
 
         if (world.isThundering()) {
             weather = "Thunder";
-            weatherColor = ColorUtil.RC_ERROR;
+            weatherColor = 0xFFE53935;
         } else if (world.isRaining()) {
             weather = "Rain";
             weatherColor = 0xFF82B1FF;
         } else {
             weather = "Clear";
-            weatherColor = ColorUtil.RC_SUCCESS;
+            weatherColor = 0xFF4CAF50;
         }
     }
 

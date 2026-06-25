@@ -7,10 +7,6 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Identifier;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /** Displays equipped armor pieces with durability. */
 public class ArmorStatusHUD extends HUDElement {
@@ -46,9 +42,9 @@ public class ArmorStatusHUD extends HUDElement {
                 int maxDmg = stack.getMaxDamage();
                 int curDmg = stack.getDamage();
                 float pct = 1f - (float) curDmg / maxDmg;
-                int barColor = pct > 0.5f ? ColorUtil.RC_SUCCESS
-                             : pct > 0.25f ? ColorUtil.RC_WARNING
-                             : ColorUtil.RC_ERROR;
+                int barColor = pct > 0.5f ? 0xFF4CAF50
+                             : pct > 0.25f ? 0xFFFF9800
+                             : 0xFFE53935;
                 int barW = (int) (pct * 14);
                 RenderUtil.fillRect(ctx, 1, y + 14, 14, 1, 0xFF333333);
                 if (barW > 0) RenderUtil.fillRect(ctx, 1, y + 14, barW, 1, applyOpacity(barColor));
@@ -56,7 +52,7 @@ public class ArmorStatusHUD extends HUDElement {
 
             // Item name
             String name = stack.getName().getString();
-            RenderUtil.drawText(ctx, name, 20, y + 4, applyOpacity(ColorUtil.RC_TEXT));
+            RenderUtil.drawText(ctx, name, 20, y + 4, themedText(ColorUtil.RC_TEXT));
 
             y += 18;
         }

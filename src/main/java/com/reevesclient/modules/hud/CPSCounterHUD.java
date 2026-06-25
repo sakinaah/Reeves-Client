@@ -46,7 +46,7 @@ public class CPSCounterHUD extends HUDElement {
     @Override
     public void render(DrawContext ctx, float tickDelta) {
         String text = "L: " + leftClicks.size() + "  R: " + rightClicks.size() + " CPS";
-        RenderUtil.drawText(ctx, text, 0, 0, applyOpacity(ColorUtil.RC_TEXT));
+        RenderUtil.drawText(ctx, text, 0, 0, themedText(ColorUtil.RC_TEXT));
     }
 
     @Override public int getWidth()  { return 100; }

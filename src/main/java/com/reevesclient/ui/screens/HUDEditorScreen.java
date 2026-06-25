@@ -3,7 +3,6 @@ package com.reevesclient.ui.screens;
 import com.reevesclient.ReevesClient;
 import com.reevesclient.core.hud.HUDElement;
 import com.reevesclient.core.hud.HUDManager;
-import com.reevesclient.core.hud.HUDPosition;
 import com.reevesclient.core.util.ColorUtil;
 import com.reevesclient.core.util.RenderUtil;
 import com.reevesclient.ui.components.RButton;
@@ -12,6 +11,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.InputUtil;
 import net.minecraft.text.Text;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.List;
 
@@ -26,7 +26,6 @@ public class HUDEditorScreen extends Screen {
 
     private final Screen parent;
     private static final int GRID_SIZE = 8;
-    private static final int HANDLE_SIZE = 6;
 
     private HUDElement dragging = null;
     private int dragOffsetX = 0;
@@ -47,6 +46,10 @@ public class HUDEditorScreen extends Screen {
 
         addDrawableChild(new RButton(width - 200, height - 30, 90, 22, "Reset All", b -> {
             // Reset positions to defaults — would clear HUD positions
+        }));
+
+        addDrawableChild(new RButton(12, height - 30, 110, 22, "Theme", b -> {
+            if (selected != null) selected.cycleTheme();
         }));
     }
 
@@ -75,6 +78,18 @@ public class HUDEditorScreen extends Screen {
                     String.format("%.2f", selected.getPosition().getScale()) +
                     "  [" + selected.getPosition().getPixelX() + ", " + selected.getPosition().getPixelY() + "]";
             RenderUtil.drawText(ctx, info, 8, height - 36, ColorUtil.RC_TEXT);
+
+            int panelX = width - 250;
+            int panelY = 12;
+            RenderUtil.fillRoundedRect(ctx, panelX, panelY, 238, 92, 8, ColorUtil.RC_BG_PANEL);
+            RenderUtil.drawBorder(ctx, panelX, panelY, 238, 92, 1, ColorUtil.RC_BORDER);
+            RenderUtil.drawText(ctx, "Selected HUD", panelX + 10, panelY + 10, ColorUtil.RC_TEXT);
+            RenderUtil.drawText(ctx, selected.isShowBackground() ? "Background: ON" : "Background: OFF",
+                panelX + 10, panelY + 26, ColorUtil.RC_TEXT_MUTED);
+            RenderUtil.drawText(ctx, "Opacity: " + String.format("%.2f", selected.getOpacity()),
+                panelX + 10, panelY + 42, ColorUtil.RC_TEXT_MUTED);
+                RenderUtil.drawText(ctx, "Theme cycles with left click. Right click toggles background.",
+                panelX + 10, panelY + 58, ColorUtil.RC_TEXT_MUTED);
         }
 
         super.render(ctx, mouseX, mouseY, delta);
@@ -126,6 +141,19 @@ public class HUDEditorScreen extends Screen {
             }
             return true;
         }
+
+        if (selected != null) {
+            int themeBtnX = 12;
+            int themeBtnY = height - 30;
+            if (mx >= themeBtnX && mx <= themeBtnX + 110 && my >= themeBtnY && my <= themeBtnY + 22 && button == 0) {
+                selected.cycleTheme();
+                return true;
+            } else if (mx >= themeBtnX && mx <= themeBtnX + 110 && my >= themeBtnY && my <= themeBtnY + 22 && button == 1) {
+                selected.setShowBackground(!selected.isShowBackground());
+                return true;
+            }
+        }
+
         selected = null;
         return false;
     }
@@ -162,8 +190,14 @@ public class HUDEditorScreen extends Screen {
     public boolean mouseScrolled(double mx, double my, double hScroll, double vScroll) {
         HUDElement hit = getElementAt((int) mx, (int) my);
         if (hit != null) {
-            float newScale = hit.getPosition().getScale() + (float) vScroll * 0.05f;
-            hit.getPosition().setScale(newScale);
+            boolean opacityAdjust = InputUtil.isKeyPressed(client.getWindow(), GLFW.GLFW_KEY_LEFT_ALT)
+                    || InputUtil.isKeyPressed(client.getWindow(), GLFW.GLFW_KEY_RIGHT_ALT);
+            if (opacityAdjust) {
+                hit.setOpacity(hit.getOpacity() + (float) vScroll * 0.05f);
+            } else {
+                float newScale = hit.getPosition().getScale() + (float) vScroll * 0.05f;
+                hit.getPosition().setScale(newScale);
+            }
             selected = hit;
             return true;
         }

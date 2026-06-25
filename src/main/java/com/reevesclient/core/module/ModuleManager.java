@@ -3,6 +3,7 @@ package com.reevesclient.core.module;
 import com.reevesclient.ReevesClient;
 import com.reevesclient.modules.hud.*;
 import com.reevesclient.modules.performance.*;
+import com.reevesclient.modules.accessibility.*;
 import com.reevesclient.modules.utility.*;
 import com.reevesclient.modules.skyblock.*;
 import com.reevesclient.modules.dungeons.*;
@@ -44,6 +45,9 @@ public class ModuleManager {
         register(new ChatEnhancementsModule());
         register(new WaypointModule());
         register(new ScreenshotManagerModule());
+
+        // ── Accessibility ────────────────────────────────────────────────
+        register(new HotbarLockModule());
 
         // ── SkyBlock ───────────────────────────────────────────────────────
         register(new SkillTrackerModule());

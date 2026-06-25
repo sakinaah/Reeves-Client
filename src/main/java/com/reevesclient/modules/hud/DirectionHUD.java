@@ -5,7 +5,6 @@ import com.reevesclient.core.util.ColorUtil;
 import com.reevesclient.core.util.RenderUtil;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.MathHelper;
 
 public class DirectionHUD extends HUDElement {
@@ -41,7 +40,7 @@ public class DirectionHUD extends HUDElement {
 
     @Override
     public void render(DrawContext ctx, float tickDelta) {
-        int text = applyOpacity(ColorUtil.RC_TEXT);
+        int text = themedText(ColorUtil.RC_TEXT);
         RenderUtil.drawText(ctx, "Facing: " + facing, 0, 0, text);
         RenderUtil.drawText(ctx, String.format("Yaw: %.1f°", yaw), 0, 10, text);
         RenderUtil.drawText(ctx, "Chunk: " + chunkX + ", " + chunkZ, 0, 20, text);

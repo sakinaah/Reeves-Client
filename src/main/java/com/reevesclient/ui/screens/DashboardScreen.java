@@ -5,9 +5,6 @@ import com.reevesclient.core.module.Module;
 import com.reevesclient.core.module.ModuleCategory;
 import com.reevesclient.core.util.ColorUtil;
 import com.reevesclient.core.util.RenderUtil;
-import com.reevesclient.core.util.TextUtil;
-import com.reevesclient.core.util.TimeUtil;
-import com.reevesclient.modules.skyblock.SkyBlockCalendarModule;
 import com.reevesclient.ui.components.RButton;
 import net.minecraft.client.gui.Click;
 import net.minecraft.client.gui.DrawContext;
@@ -47,11 +44,17 @@ public class DashboardScreen extends Screen {
         addDrawableChild(new RButton(width - 130, btnY, 120, 22, "HUD Editor", b ->
             client.setScreen(new HUDEditorScreen(this))));
 
+        addDrawableChild(new RButton(width - 250, btnY, 110, 22, "Items", b ->
+            client.setScreen(new ItemBrowserScreen(this))));
+
         addDrawableChild(new RButton(PADDING, btnY, 120, 22, "Settings", b ->
             client.setScreen(new SettingsScreen(this))));
 
         addDrawableChild(new RButton(PADDING + 130, btnY, 80, 22, "Close", b ->
             client.setScreen(parent)));
+
+        addDrawableChild(new RButton(width - 360, btnY, 100, 22, "Capes", b ->
+            client.setScreen(new CapeEditorScreen(this))));
     }
 
     @Override

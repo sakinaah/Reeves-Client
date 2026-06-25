@@ -32,7 +32,7 @@ public class FPSGraphHUD extends HUDElement {
     @Override
     public void render(DrawContext ctx, float tickDelta) {
         // Background
-        RenderUtil.fillRect(ctx, 0, 0, GRAPH_W, GRAPH_H + 12, ColorUtil.RC_BG);
+        RenderUtil.fillRect(ctx, 0, 0, GRAPH_W, GRAPH_H + 12, themedBackground(ColorUtil.RC_BG_PANEL));
 
         if (fpsSamples.isEmpty()) return;
 
@@ -45,7 +45,7 @@ public class FPSGraphHUD extends HUDElement {
         float barW = (float) GRAPH_W / SAMPLES;
         for (int i = 0; i < arr.length; i++) {
             int barH = (int) ((float) arr[i] / scale * GRAPH_H);
-            int color = arr[i] >= TARGET_FPS ? ColorUtil.RC_SUCCESS : ColorUtil.RC_WARNING;
+            int color = arr[i] >= TARGET_FPS ? 0xFF4CAF50 : 0xFFFF9800;
             int bx = (int) (i * barW);
             RenderUtil.fillRect(ctx, bx, GRAPH_H - barH, (int) Math.ceil(barW), barH, applyOpacity(color));
         }
@@ -56,7 +56,7 @@ public class FPSGraphHUD extends HUDElement {
 
         // Label
         int current = arr[arr.length - 1];
-        RenderUtil.drawText(ctx, current + " FPS", 2, GRAPH_H + 2, applyOpacity(ColorUtil.RC_TEXT));
+        RenderUtil.drawText(ctx, current + " FPS", 2, GRAPH_H + 2, themedText(ColorUtil.RC_TEXT));
     }
 
     @Override public int getWidth()  { return GRAPH_W; }

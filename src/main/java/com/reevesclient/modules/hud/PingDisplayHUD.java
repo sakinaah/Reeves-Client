@@ -1,7 +1,6 @@
 package com.reevesclient.modules.hud;
 
 import com.reevesclient.core.hud.HUDElement;
-import com.reevesclient.core.util.ColorUtil;
 import com.reevesclient.core.util.RenderUtil;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -29,10 +28,10 @@ public class PingDisplayHUD extends HUDElement {
     }
 
     private int pingColor() {
-        if (ping < 80)  return ColorUtil.RC_SUCCESS;
-        if (ping < 150) return ColorUtil.RC_TEXT;
-        if (ping < 250) return ColorUtil.RC_WARNING;
-        return ColorUtil.RC_ERROR;
+        if (ping < 80)  return 0xFF4CAF50;
+        if (ping < 150) return getTextColor();
+        if (ping < 250) return 0xFFFF9800;
+        return 0xFFE53935;
     }
 
     @Override public int getWidth()  { return 50; }

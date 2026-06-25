@@ -1,7 +1,6 @@
 package com.reevesclient.modules.hud;
 
 import com.reevesclient.core.hud.HUDElement;
-import com.reevesclient.core.util.ColorUtil;
 import com.reevesclient.core.util.RenderUtil;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -24,8 +23,7 @@ public class CoordinatesHUD extends HUDElement {
 
     @Override
     public void render(DrawContext ctx, float tickDelta) {
-        int text = applyOpacity(ColorUtil.RC_TEXT);
-        int muted = applyOpacity(ColorUtil.RC_TEXT_MUTED);
+        int text = themedText(0xFFE0E0E0);
 
         RenderUtil.drawText(ctx, String.format("X: %.1f", x), 0, 0,  text);
         RenderUtil.drawText(ctx, String.format("Y: %.1f", y), 0, 10, text);

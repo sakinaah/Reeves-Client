@@ -24,7 +24,7 @@ public class SessionTimerHUD extends HUDElement {
 
     @Override
     public void render(DrawContext ctx, float tickDelta) {
-        RenderUtil.drawText(ctx, "Session: " + display, 0, 0, applyOpacity(ColorUtil.RC_TEXT));
+        RenderUtil.drawText(ctx, "Session: " + display, 0, 0, themedText(ColorUtil.RC_TEXT));
     }
 
     @Override public int getWidth()  { return 90; }

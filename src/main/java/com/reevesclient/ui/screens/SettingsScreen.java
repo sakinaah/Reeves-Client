@@ -4,6 +4,7 @@ import com.reevesclient.ReevesClient;
 import com.reevesclient.core.module.Module;
 import com.reevesclient.core.module.ModuleCategory;
 import com.reevesclient.core.module.settings.ModuleSetting;
+import com.reevesclient.core.module.settings.ModuleSetting.BooleanSetting;
 import com.reevesclient.core.util.ColorUtil;
 import com.reevesclient.core.util.RenderUtil;
 import com.reevesclient.ui.components.*;
@@ -13,7 +14,6 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 
 import java.util.List;
-import java.util.Locale;
 
 /**
  * Full settings screen.
@@ -53,6 +53,9 @@ public class SettingsScreen extends Screen {
 
         addDrawableChild(new RButton(px + getPanelW() - 90, py + getPanelH() - 30, 80, 22, "Back",
                 b -> client.setScreen(parent)));
+
+        addDrawableChild(new RButton(px + getPanelW() - 185, py + getPanelH() - 30, 90, 22, "Capes",
+            b -> client.setScreen(new CapeEditorScreen(this))));
     }
 
     @Override
@@ -102,7 +105,6 @@ public class SettingsScreen extends Screen {
         ctx.fill(x, y, x + MODULE_LIST_W, y + h, 0xFF141426);
         // search field sits at y+8
         int listY = y + 36 + PADDING;
-        int maxH  = h - 50;
 
         List<Module> modules = getFilteredModules();
         int idx = 0;
@@ -117,6 +119,10 @@ public class SettingsScreen extends Screen {
             ctx.fill(x + PADDING, itemY + 8, x + PADDING + 6, itemY + 20, statusColor);
             RenderUtil.drawText(ctx, m.getName(), x + PADDING + 10, itemY + 10,
                     sel ? ColorUtil.RC_TEXT : ColorUtil.RC_TEXT_MUTED);
+
+            int toggleX = x + MODULE_LIST_W - PADDING - 36;
+            int toggleY = itemY + 5;
+            renderToggle(ctx, toggleX, toggleY, m.isEnabled());
             idx++;
         }
     }
@@ -144,7 +150,13 @@ public class SettingsScreen extends Screen {
             dy += 12;
             RenderUtil.drawText(ctx, setting.getDescription(), x + PADDING, dy, ColorUtil.RC_TEXT_MUTED);
             dy += 10;
-            RenderUtil.drawText(ctx, "Value: " + setting.getValue(), x + PADDING, dy, ColorUtil.RC_ACCENT);
+            if (setting instanceof BooleanSetting boolSetting) {
+                int toggleX = x + w - PADDING - 36;
+                int toggleY = dy - 1;
+                renderToggle(ctx, toggleX, toggleY, boolSetting.getValue());
+            } else {
+                RenderUtil.drawText(ctx, "Value: " + setting.getValue(), x + PADDING, dy, ColorUtil.RC_ACCENT);
+            }
             dy += 16;
         }
     }
@@ -181,8 +193,19 @@ public class SettingsScreen extends Screen {
         for (int i = 0; i < modules.size(); i++) {
             int itemY = listY + i * ITEM_H - scrollOffset;
             if (mx >= listX && mx <= listX + MODULE_LIST_W && my >= itemY && my <= itemY + ITEM_H) {
-                if (button == 0) selectedModule = modules.get(i);
-                if (button == 1 && selectedModule != null) selectedModule.toggle();
+                Module clicked = modules.get(i);
+                int toggleX = listX + MODULE_LIST_W - PADDING - 36;
+                int toggleY = itemY + 5;
+                boolean onToggle = mx >= toggleX && mx <= toggleX + 36 && my >= toggleY && my <= toggleY + 18;
+
+                if (button == 0 && onToggle) {
+                    clicked.toggle();
+                    selectedModule = clicked;
+                    return true;
+                }
+
+                if (button == 0) selectedModule = clicked;
+                if (button == 1) clicked.toggle();
                 return true;
             }
         }
@@ -200,6 +223,14 @@ public class SettingsScreen extends Screen {
     private int getPanelY() { return Math.max(10, (height - 540) / 2); }
     private int getPanelW() { return Math.min(width - 20, 860); }
     private int getPanelH() { return Math.min(height - 20, 540); }
+
+    private void renderToggle(DrawContext ctx, int x, int y, boolean enabled) {
+        int track = enabled ? ColorUtil.RC_ACCENT : 0xFF404055;
+        int thumbX = enabled ? x + 18 : x + 2;
+        ctx.fill(x, y + 4, x + 36, y + 14, track);
+        ctx.fill(x + 4, y, x + 32, y + 18, track);
+        ctx.fill(thumbX, y + 2, thumbX + 14, y + 16, 0xFFFFFFFF);
+    }
 
     @Override
     public boolean shouldPause() { return false; }
