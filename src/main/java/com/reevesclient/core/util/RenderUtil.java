@@ -50,7 +50,7 @@ public final class RenderUtil {
     // ── Text ─────────────────────────────────────────────────────────────────
 
     public static void drawText(DrawContext ctx, String text, int x, int y, int color) {
-        ctx.drawText(mc().textRenderer, text, x, y, color, true);
+        ctx.drawText(mc().textRenderer, text, x, y, color, ColorUtil.TEXT_SHADOW);
     }
 
     public static void drawTextNoShadow(DrawContext ctx, String text, int x, int y, int color) {
@@ -60,7 +60,7 @@ public final class RenderUtil {
     public static void drawCenteredText(DrawContext ctx, String text, int cx, int y, int color) {
         TextRenderer tr = mc().textRenderer;
         int w = tr.getWidth(text);
-        ctx.drawText(tr, text, cx - w / 2, y, color, true);
+        ctx.drawText(tr, text, cx - w / 2, y, color, ColorUtil.TEXT_SHADOW);
     }
 
     public static int textWidth(String text) {

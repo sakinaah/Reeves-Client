@@ -1,6 +1,7 @@
 package com.reevesclient;
 
 import com.reevesclient.core.config.ConfigManager;
+import com.reevesclient.core.theme.ThemeManager;
 import com.reevesclient.core.hud.HUDManager;
 import com.reevesclient.core.module.ModuleManager;
 import com.reevesclient.cape.CapeManager;
@@ -38,6 +39,7 @@ public class ReevesClient implements ClientModInitializer {
     private static ReevesClient instance;
 
     private ConfigManager configManager;
+    private ThemeManager themeManager;
     private ModuleManager moduleManager;
     private HUDManager hudManager;
     private CapeManager capeManager;
@@ -59,6 +61,7 @@ public class ReevesClient implements ClientModInitializer {
         registerKeyBindings();
 
         configManager   = new ConfigManager();
+        themeManager    = new ThemeManager();
         moduleManager   = new ModuleManager();
         hudManager      = new HUDManager();
         capeManager     = new CapeManager();
@@ -66,6 +69,7 @@ public class ReevesClient implements ClientModInitializer {
         skyBlockAPI     = new SkyBlockAPIClient();
 
         configManager.load();
+        themeManager.load(configManager); // apply saved palette before anything renders
         moduleManager.init();
         hudManager.init();
         capeManager.init();
@@ -169,6 +173,7 @@ public class ReevesClient implements ClientModInitializer {
 
     public static ReevesClient getInstance()  { return instance; }
     public ConfigManager  getConfigManager()  { return configManager; }
+    public ThemeManager   getThemeManager()   { return themeManager; }
     public ModuleManager  getModuleManager()  { return moduleManager; }
     public HUDManager     getHUDManager()     { return hudManager; }
     public CapeManager    getCapeManager()    { return capeManager; }

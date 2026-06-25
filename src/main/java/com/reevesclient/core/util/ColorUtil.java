@@ -54,14 +54,20 @@ public final class ColorUtil {
     }
 
     // ── Reeves Client design system colors ───────────────────────────────────
-    public static final int RC_ACCENT        = 0xFF5B8DEE; // blue
-    public static final int RC_BG            = 0xDD1A1A2E; // dark navy
-    public static final int RC_BG_PANEL      = 0xDD16213E; // panel bg
-    public static final int RC_SURFACE       = 0xDD0F3460; // surface
-    public static final int RC_TEXT          = 0xFFE0E0E0; // primary text
-    public static final int RC_TEXT_MUTED    = 0xFF9E9E9E; // muted text
-    public static final int RC_BORDER        = 0x33FFFFFF; // subtle border
-    public static final int RC_SUCCESS       = 0xFF4CAF50;
-    public static final int RC_WARNING       = 0xFFFF9800;
-    public static final int RC_ERROR         = 0xFFE53935;
+    // NOT final: the ThemeManager mutates these at runtime so the whole UI can be
+    // re-themed live. (final primitives would be inlined at compile time and could
+    // never change.)
+    public static int RC_ACCENT        = 0xFF5B8DEE; // blue
+    public static int RC_BG            = 0xDD1A1A2E; // dark navy
+    public static int RC_BG_PANEL      = 0xDD16213E; // panel bg
+    public static int RC_SURFACE       = 0xDD0F3460; // surface
+    public static int RC_TEXT          = 0xFFE0E0E0; // primary text
+    public static int RC_TEXT_MUTED    = 0xFF9E9E9E; // muted text
+    public static int RC_BORDER        = 0x33FFFFFF; // subtle border
+    public static int RC_SUCCESS       = 0xFF4CAF50;
+    public static int RC_WARNING       = 0xFFFF9800;
+    public static int RC_ERROR         = 0xFFE53935;
+
+    /** Global text-shadow toggle, honoured by {@code RenderUtil.drawText}. */
+    public static boolean TEXT_SHADOW = true;
 }
