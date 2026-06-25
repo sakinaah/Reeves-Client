@@ -48,6 +48,7 @@ public class ModuleManager {
 
         // ── Accessibility ────────────────────────────────────────────────
         register(new HotbarLockModule());
+        register(new ItemProtectionModule());
 
         // ── SkyBlock ───────────────────────────────────────────────────────
         register(new SkillTrackerModule());
