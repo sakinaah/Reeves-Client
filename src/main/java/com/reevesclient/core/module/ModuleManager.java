@@ -65,6 +65,7 @@ public class ModuleManager {
 
         // ── Dungeons ───────────────────────────────────────────────────────
         register(new DungeonRoomModule());
+        register(new DungeonMapModule());
         register(new SecretWaypointModule());
         register(new DungeonPartyModule());
         register(new DungeonScoreModule());

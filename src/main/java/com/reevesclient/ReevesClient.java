@@ -125,6 +125,9 @@ public class ReevesClient implements ClientModInitializer {
             hudManager.render(drawContext, tickCounter.getTickProgress(true));
         });
 
+        // In-world 3D rendering (waypoints now; dungeon secret boxes once map scanning lands).
+        com.reevesclient.core.render.WorldRenderer3D.register();
+
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> {
             EventBus.getInstance().post(new WorldLoadEvent(client.world));
             var serverEntry = client.getCurrentServerEntry();

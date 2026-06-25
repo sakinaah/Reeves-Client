@@ -91,6 +91,8 @@
   "module.reeves-client.item_protection.desc": "Lock items to prevent accidental dropping, selling or salvaging.",
   "module.reeves-client.dungeon_hud": "Dungeon Tracker HUD",
   "module.reeves-client.dungeon_hud.desc": "On-screen dungeon score, secrets, deaths and crypts.",
+  "module.reeves-client.dungeon_map": "Dungeon Map",
+  "module.reeves-client.dungeon_map.desc": "Renders the dungeon map overlay from the in-game map item.",
 
   "module.reeves-client.dungeon_rooms": "Dungeon Room Identifier",
   "module.reeves-client.dungeon_rooms.desc": "Identifies the current dungeon room and displays known secret locations.",

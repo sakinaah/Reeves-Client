@@ -28,6 +28,7 @@ public class HUDManager {
         register(new SessionTimerHUD());
         register(new WeatherHUD());
         register(new DungeonHUD());
+        register(new DungeonMapHUD());
 
         ReevesClient.getInstance().getConfigManager().loadHUD(this);
         ReevesClient.LOGGER.info("HUDManager: {} elements loaded.", elements.size());

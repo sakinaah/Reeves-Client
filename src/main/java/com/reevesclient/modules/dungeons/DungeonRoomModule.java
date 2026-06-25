@@ -84,19 +84,19 @@ public class DungeonRoomModule extends Module {
     @Override
     public void onTick(MinecraftClient client) {
         if (!isEnabled() || !HypixelUtil.isInDungeon() || client.player == null) return;
-        // Room detection: scoreboard sidebar contains room name on some lines
-        detectRoomFromScoreboard(client);
+        detectRoomFromScoreboard();
     }
 
-    private void detectRoomFromScoreboard(MinecraftClient client) {
-        if (client.world == null) return;
-        var scoreboard = client.world.getScoreboard();
-        var objective  = scoreboard.getObjectiveForSlot(
-                net.minecraft.scoreboard.ScoreboardDisplaySlot.SIDEBAR);
-        if (objective == null) { currentRoom = null; return; }
-
-        for (var holder : scoreboard.getKnownScoreHolders()) {
-            String line = com.reevesclient.core.util.TextUtil.stripFormatting(holder.getNameForScoreboard());
+    /**
+     * Heuristic room-name match against the sidebar. Uses the correct sidebar
+     * reader (team prefix/suffix) rather than the raw score-holder name.
+     *
+     * NOTE: Hypixel does not reliably expose the room name in the sidebar — robust
+     * room identification needs dungeon map-item scanning, which is not yet
+     * implemented. This remains a best-effort match.
+     */
+    private void detectRoomFromScoreboard() {
+        for (String line : HypixelUtil.getSidebarLines()) {
             if (line.isBlank()) continue;
             String key = line.trim().toLowerCase().replace(" ", "_");
             if (roomRegistry.containsKey(key)) {
