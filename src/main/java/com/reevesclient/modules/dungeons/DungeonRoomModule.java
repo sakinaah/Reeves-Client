@@ -81,9 +81,13 @@ public class DungeonRoomModule extends Module {
      * Detects room by reading a known identifier block at a fixed offset.
      * The detection is heuristic — we match based on recognizable block patterns.
      */
+    private int tickCounter = 0;
+
     @Override
     public void onTick(MinecraftClient client) {
         if (!isEnabled() || !HypixelUtil.isInDungeon() || client.player == null) return;
+        // Throttle sidebar parsing — room state changes slowly.
+        if (tickCounter++ % 10 != 0) return;
         detectRoomFromScoreboard();
     }
 

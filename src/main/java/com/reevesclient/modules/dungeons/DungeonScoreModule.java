@@ -25,14 +25,21 @@ import java.util.regex.Pattern;
 public class DungeonScoreModule extends Module {
 
     // Parsed run state
-    private String floor            = "";
-    private int    clearedPct       = 0;
-    private int    foundSecrets     = 0;
-    private int    deaths           = 0;
-    private int    crypts           = 0;
-    private int    completedPuzzles = 0;
-    private int    totalPuzzles     = 0;
-    private long   runStartMs       = 0;
+    private String  floor            = "";
+    private int     clearedPct       = 0;
+    private int     foundSecrets     = 0;
+    private int     deaths           = 0;
+    private int     crypts           = 0;
+    private int     completedPuzzles = 0;
+    private int     totalPuzzles     = 0;
+    private long    runStartMs       = 0;
+    private long    bloodOpenMs      = 0;     // when the blood door opened (0 = not yet)
+    private boolean cleared          = false; // run finished ("Dungeon Cleared!")
+
+    // Parse throttling — scoreboard/tab parsing is relatively costly, so we only
+    // do it a few times per second rather than every frame/tick.
+    private static final int PARSE_INTERVAL_TICKS = 10;
+    private int tickCounter = 0;
 
     // Display settings
     private final BooleanSetting showScore;
@@ -64,9 +71,26 @@ public class DungeonScoreModule extends Module {
         }
         if (runStartMs == 0) runStartMs = System.currentTimeMillis();
 
+        // Throttle the (string-heavy) scoreboard/tab parsing.
+        if (tickCounter++ % PARSE_INTERVAL_TICKS != 0) return;
+
         parseFloor();
         parseSidebar();
         parseTabList();
+    }
+
+    /**
+     * Handles dungeon chat events. Called from the chat mixin. Detects the blood
+     * door opening and run completion — both have stable, well-known wording.
+     */
+    public void onChat(String plain) {
+        if (!isEnabled()) return;
+        if (bloodOpenMs == 0 && plain.contains("BLOOD DOOR") && plain.contains("opened")) {
+            bloodOpenMs = System.currentTimeMillis();
+        }
+        if (!cleared && (plain.contains("Dungeon Cleared!") || plain.contains("> EXTRA STATS <"))) {
+            cleared = true;
+        }
     }
 
     private void parseFloor() {
@@ -170,6 +194,16 @@ public class DungeonScoreModule extends Module {
     public boolean showDeaths()  { return showDeaths.getValue(); }
     public boolean showCrypts()  { return showCrypts.getValue(); }
 
+    public boolean isBloodOpen() { return bloodOpenMs != 0; }
+    public boolean isCleared()   { return cleared; }
+
+    /** mm:ss since the blood door opened, or "" if it hasn't. */
+    public String getBloodElapsedString() {
+        if (bloodOpenMs == 0) return "";
+        long s = (System.currentTimeMillis() - bloodOpenMs) / 1000;
+        return String.format("%d:%02d", s / 60, s % 60);
+    }
+
     /** Resets per-run state. Called when entering a new dungeon. */
     public void onNewRun() {
         floor = "";
@@ -180,5 +214,8 @@ public class DungeonScoreModule extends Module {
         completedPuzzles = 0;
         totalPuzzles = 0;
         runStartMs = 0;
+        bloodOpenMs = 0;
+        cleared = false;
+        tickCounter = 0;
     }
 }

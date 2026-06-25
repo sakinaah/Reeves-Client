@@ -40,6 +40,11 @@ public abstract class MixinChatScreen {
         SlayerTrackerModule stm = mm.get(SlayerTrackerModule.class);
         if (stm != null) stm.onChat(plain);
 
+        // Dungeon tracker — blood door / run completion
+        com.reevesclient.modules.dungeons.DungeonScoreModule dsm =
+                mm.get(com.reevesclient.modules.dungeons.DungeonScoreModule.class);
+        if (dsm != null) dsm.onChat(plain);
+
         // Secret waypoints — detect "You found a Secret!" line
         SecretWaypointModule swm = mm.get(SecretWaypointModule.class);
         if (swm != null && plain.contains("You found a Secret")) {

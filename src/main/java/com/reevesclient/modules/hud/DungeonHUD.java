@@ -42,7 +42,9 @@ public class DungeonHUD extends HUDElement {
         if (m.showCrypts())  lines.add("Crypts: " + m.getCrypts());
         if (m.showDeaths())  lines.add("Deaths: " + m.getDeaths());
         if (m.getTotalPuzzles() > 0) lines.add("Puzzles: " + m.getCompletedPuzzles() + "/" + m.getTotalPuzzles());
+        if (m.isBloodOpen()) lines.add("Blood: " + m.getBloodElapsedString());
         if (m.showScore())   lines.add("Score: ~" + m.getEstimatedScore() + " (" + m.getEstimatedGrade() + ")");
+        if (m.isCleared())   lines.add("✔ CLEARED");
 
         int pad = 4;
         int lineH = 10;
@@ -63,5 +65,5 @@ public class DungeonHUD extends HUDElement {
     }
 
     @Override public int getWidth()  { return 120; }
-    @Override public int getHeight() { return 78; }
+    @Override public int getHeight() { return 100; }
 }
