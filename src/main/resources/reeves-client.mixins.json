@@ -6,7 +6,7 @@
     "MixinGameRenderer",
     "MixinInGameHud",
     "MixinPlayerEntityRenderer",
-    "MixinClientPlayerInteractionManager",
+    "MixinClientPlayerEntity",
     "MixinChatScreen",
     "MixinWorldRenderer",
     "MixinEntityRenderer"

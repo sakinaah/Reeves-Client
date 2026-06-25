@@ -10,7 +10,14 @@ import com.reevesclient.core.module.settings.ModuleSetting.BooleanSetting;
  */
 public class HotbarLockModule extends Module {
 
-    private final BooleanSetting[] lockedSlots = new BooleanSetting[9];
+    private static final int HOTBAR_SIZE = 9;
+
+    // NOTE: do NOT use a field initializer here. registerSettings() is invoked from
+    // the Module constructor (super(...)), which runs *before* subclass field
+    // initializers — an initializer would null this array out again and the
+    // settings registered during construction would be lost. Allocate inside
+    // registerSettings() instead.
+    private BooleanSetting[] lockedSlots;
 
     public HotbarLockModule() {
         super("hotbar_lock", "Hotbar Lock",
@@ -20,6 +27,7 @@ public class HotbarLockModule extends Module {
 
     @Override
     protected void registerSettings() {
+        lockedSlots = new BooleanSetting[HOTBAR_SIZE];
         for (int slot = 0; slot < lockedSlots.length; slot++) {
             lockedSlots[slot] = addSetting(new BooleanSetting(
                     "slot_" + slot,
@@ -31,6 +39,8 @@ public class HotbarLockModule extends Module {
     }
 
     public boolean isSlotLocked(int slot) {
-        return slot >= 0 && slot < lockedSlots.length && lockedSlots[slot].getValue();
+        return lockedSlots != null
+                && slot >= 0 && slot < lockedSlots.length
+                && lockedSlots[slot].getValue();
     }
 }
