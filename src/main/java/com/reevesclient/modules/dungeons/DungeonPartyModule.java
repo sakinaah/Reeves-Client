@@ -43,9 +43,13 @@ public class DungeonPartyModule extends Module {
               ModuleCategory.DUNGEONS, true);
     }
 
+    private int tickCounter = 0;
+
     @Override
     public void onTick(MinecraftClient client) {
         if (!isEnabled() || !HypixelUtil.isInDungeon() || client.getNetworkHandler() == null) return;
+        // Party roster changes slowly — parse ~once per second, not every tick.
+        if (tickCounter++ % 20 != 0) return;
         members.clear();
         // Parse tab-list entries
         for (var entry : client.getNetworkHandler().getPlayerList()) {

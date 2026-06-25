@@ -36,6 +36,8 @@ public class HUDManager {
 
     public void onTick(MinecraftClient client) {
         for (HUDElement el : elements) {
+            // Performance: hidden elements don't need per-tick data updates.
+            if (!el.isVisible()) continue;
             try { el.onTick(client); }
             catch (Exception e) {
                 ReevesClient.LOGGER.error("Error ticking HUD element '{}': {}", el.getId(), e.getMessage(), e);

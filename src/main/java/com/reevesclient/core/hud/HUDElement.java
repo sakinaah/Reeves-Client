@@ -14,6 +14,8 @@ public abstract class HUDElement {
     private final String displayName;
 
     protected HUDPosition position;
+    private final float defaultX;
+    private final float defaultY;
     private boolean visible  = true;
     private float   opacity  = 1f;
     private boolean showBackground = false;
@@ -25,7 +27,17 @@ public abstract class HUDElement {
     protected HUDElement(String id, String displayName, float defaultX, float defaultY) {
         this.id          = id;
         this.displayName = displayName;
+        this.defaultX    = defaultX;
+        this.defaultY    = defaultY;
         this.position    = new HUDPosition(defaultX, defaultY, 1f);
+    }
+
+    /** Restores this element's position, scale and opacity to its defaults. */
+    public void resetPosition() {
+        position.setNormalizedX(defaultX);
+        position.setNormalizedY(defaultY);
+        position.setScale(1f);
+        setOpacity(1f);
     }
 
     // ── Lifecycle ────────────────────────────────────────────────────────────

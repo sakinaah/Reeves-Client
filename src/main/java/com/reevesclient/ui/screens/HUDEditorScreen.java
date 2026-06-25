@@ -45,7 +45,10 @@ public class HUDEditorScreen extends Screen {
         }));
 
         addDrawableChild(new RButton(width - 200, height - 30, 90, 22, "Reset All", b -> {
-            // Reset positions to defaults — would clear HUD positions
+            for (HUDElement el : ReevesClient.getInstance().getHUDManager().getElements()) {
+                el.resetPosition();
+            }
+            ReevesClient.getInstance().getConfigManager().save();
         }));
 
         addDrawableChild(new RButton(12, height - 30, 110, 22, "Theme", b -> {

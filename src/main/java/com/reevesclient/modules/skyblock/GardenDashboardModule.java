@@ -33,10 +33,13 @@ public class GardenDashboardModule extends Module {
     }
 
     /** Called each tick to refresh data from scoreboard / action bar. */
+    private int tickCounter = 0;
+
     @Override
     public void onTick(MinecraftClient client) {
         if (!isEnabled() || !HypixelUtil.isInGarden()) return;
-        // Real data is parsed from scoreboard sidebar lines
+        // Sidebar parsing is relatively costly — throttle to a few times per second.
+        if (tickCounter++ % 10 != 0) return;
         parseSidebar(client);
     }
 

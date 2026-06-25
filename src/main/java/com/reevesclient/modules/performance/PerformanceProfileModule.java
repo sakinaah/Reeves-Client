@@ -16,6 +16,10 @@ public class PerformanceProfileModule extends Module {
 
     private final EnumSetting<Profile> profile;
 
+    // Apply a profile only when it changes — not every tick — so the user can
+    // still adjust vanilla settings afterwards and we don't burn work each tick.
+    private Profile lastApplied = null;
+
     public PerformanceProfileModule() {
         super("performance_profiles", "Performance Profiles",
               "Quickly apply preset optimization configurations.",
@@ -28,9 +32,18 @@ public class PerformanceProfileModule extends Module {
     }
 
     @Override
+    protected void onDisable() {
+        // Allow re-applying the same profile after a disable/enable cycle.
+        lastApplied = null;
+    }
+
+    @Override
     public void onTick(MinecraftClient mc) {
-        if (mc.options == null || profile.getValue() == Profile.NONE) return;
-        applyProfile(mc, profile.getValue());
+        if (mc.options == null) return;
+        Profile current = profile.getValue();
+        if (current == lastApplied) return;   // already applied; don't fight the user
+        lastApplied = current;
+        if (current != Profile.NONE) applyProfile(mc, current);
     }
 
     private void applyProfile(MinecraftClient mc, Profile p) {
