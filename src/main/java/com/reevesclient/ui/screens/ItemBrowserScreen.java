@@ -74,6 +74,15 @@ public class ItemBrowserScreen extends Screen {
         renderList(ctx, px, py + 34, ph - 34);
         renderDetails(ctx, px + LEFT_W, py + 34, pw - LEFT_W, ph - 34);
 
+        // Inline calculator: if the query is a math expression, show the result
+        // in the header (drawn on top, clear of the list background).
+        java.util.OptionalDouble calc = com.reevesclient.core.util.Calculator.tryEvaluate(searchText);
+        if (calc.isPresent()) {
+            String result = "= " + com.reevesclient.core.util.Calculator.format(calc.getAsDouble());
+            RenderUtil.drawText(ctx, result, px + pw - RenderUtil.textWidth(result) - PADDING, py + 11,
+                    ColorUtil.RC_SUCCESS);
+        }
+
         super.render(ctx, mouseX, mouseY, delta);
     }
 
