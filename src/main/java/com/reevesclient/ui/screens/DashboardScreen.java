@@ -147,6 +147,23 @@ public class DashboardScreen extends Screen {
         String desc = m.getDescription();
         if (desc.length() > 38) desc = desc.substring(0, 35) + "…";
         RenderUtil.drawText(ctx, desc, x + 8, y + 22, ColorUtil.RC_TEXT_MUTED);
+
+        // Visual ON/OFF switch (the whole card is clickable to toggle).
+        renderToggle(ctx, x + w - 8 - 36, y + CARD_H - 8 - 18, m.isEnabled());
+    }
+
+    private void renderToggle(DrawContext ctx, int x, int y, boolean enabled) {
+        int track  = enabled ? ColorUtil.RC_ACCENT : 0xFF404055;
+        int thumbX = enabled ? x + 36 - 14 - 2 : x + 2;
+        ctx.fill(x, y + 4, x + 36, y + 14, track);
+        ctx.fill(x + 4, y, x + 32, y + 18, track);
+        ctx.fill(thumbX, y + 2, thumbX + 14, y + 16, 0xFFFFFFFF);
+    }
+
+    /** Persists module state so toggles survive a restart. */
+    private void saveConfig() {
+        var cfg = ReevesClient.getInstance().getConfigManager();
+        if (cfg != null) cfg.save();
     }
 
     @Override
@@ -166,6 +183,31 @@ public class DashboardScreen extends Screen {
                 selectedCategory = i;
                 return true;
             }
+        }
+
+        // Module cards — a click anywhere on a card toggles that module.
+        // Grid math mirrors renderContent() exactly.
+        int contentX = px + SIDEBAR_W;
+        int contentY = py + 40;
+        int contentW = panelW - SIDEBAR_W;
+        int cardX0 = contentX + PADDING;
+        int cardY  = contentY + PADDING;
+        int cols   = Math.max(1, (contentW - PADDING * 2) / 200);
+        int cardW  = (contentW - PADDING * (cols + 1)) / cols;
+
+        List<Module> modules = ReevesClient.getInstance().getModuleManager()
+                .getByCategory(categories[selectedCategory]);
+        int col = 0;
+        for (Module m : modules) {
+            int mxCard = cardX0 + col * (cardW + PADDING);
+            if (mouseX >= mxCard && mouseX <= mxCard + cardW
+             && mouseY >= cardY && mouseY <= cardY + CARD_H) {
+                m.toggle();
+                saveConfig();
+                return true;
+            }
+            col++;
+            if (col >= cols) { col = 0; cardY += CARD_H + PADDING; }
         }
 
         return super.mouseClicked(click, shifted);

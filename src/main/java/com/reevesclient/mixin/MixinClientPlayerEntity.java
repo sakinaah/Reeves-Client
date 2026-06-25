@@ -35,14 +35,18 @@ public abstract class MixinClientPlayerEntity {
             return;
         }
 
-        HotbarLockModule module = instance.getModuleManager().get(HotbarLockModule.class);
-        if (module == null || !module.isEnabled()) {
+        // 1) Hotbar slot lock (HotbarLockModule).
+        HotbarLockModule slotLock = instance.getModuleManager().get(HotbarLockModule.class);
+        if (slotLock != null && slotLock.isEnabled()
+                && slotLock.isSlotLocked(client.player.getInventory().getSelectedSlot())) {
+            cir.setReturnValue(false); // matches vanilla's "nothing dropped"
             return;
         }
 
-        int selectedSlot = client.player.getInventory().getSelectedSlot();
-        if (module.isSlotLocked(selectedSlot)) {
-            // Returning false matches vanilla's "nothing was dropped" result.
+        // 2) Item-type lock (ItemProtectionModule) on the held stack.
+        com.reevesclient.modules.accessibility.ItemProtectionModule prot =
+                instance.getModuleManager().get(com.reevesclient.modules.accessibility.ItemProtectionModule.class);
+        if (prot != null && prot.isEnabled() && prot.isLocked(client.player.getMainHandStack())) {
             cir.setReturnValue(false);
         }
     }

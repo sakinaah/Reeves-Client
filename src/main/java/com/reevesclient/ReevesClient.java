@@ -49,6 +49,7 @@ public class ReevesClient implements ClientModInitializer {
     public static KeyBinding KEY_OPEN_HUD_EDITOR;
     public static KeyBinding KEY_TOGGLE_SPRINT;
     public static KeyBinding KEY_TOGGLE_SNEAK;
+    public static KeyBinding KEY_TOGGLE_ITEM_LOCK;
 
     @Override
     public void onInitializeClient() {
@@ -102,6 +103,13 @@ public class ReevesClient implements ClientModInitializer {
                 "key.reeves-client.toggle_sneak",
                 InputUtil.Type.KEYSYM,
                 GLFW.GLFW_KEY_UNKNOWN,
+                rc
+        ));
+
+        KEY_TOGGLE_ITEM_LOCK = KeyBindingHelper.registerKeyBinding(new KeyBinding(
+                "key.reeves-client.toggle_item_lock",
+                InputUtil.Type.KEYSYM,
+                GLFW.GLFW_KEY_L,
                 rc
         ));
     }

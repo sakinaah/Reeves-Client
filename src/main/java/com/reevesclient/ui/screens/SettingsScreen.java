@@ -36,6 +36,12 @@ public class SettingsScreen extends Screen {
     private static final int MODULE_LIST_W = 200;
     private static final int PADDING      = 8;
     private static final int ITEM_H       = 28;
+    private static final int CAT_TOGGLE_W = 28;
+    private static final int CAT_TOGGLE_H = 14;
+
+    // Boolean-setting toggle hit-boxes captured during render of the settings panel.
+    private final java.util.List<BooleanSetting> settingToggleRefs  = new java.util.ArrayList<>();
+    private final java.util.List<int[]>          settingToggleRects = new java.util.ArrayList<>();
 
     public SettingsScreen(Screen parent) {
         super(Text.literal("Settings"));
@@ -95,10 +101,34 @@ public class SettingsScreen extends Screen {
                 ctx.fill(x, catY, x + SIDEBAR_W, catY + 24, ColorUtil.RC_SURFACE);
                 ctx.fill(x, catY, x + 2, catY + 24, cat.accentColor);
             }
-            RenderUtil.drawText(ctx, cat.displayName, x + PADDING, catY + 8,
+            RenderUtil.drawText(ctx, cat.displayName, x + PADDING, catY + 7,
                     sel ? ColorUtil.RC_TEXT : ColorUtil.RC_TEXT_MUTED);
+            // Category-wide master toggle (enables/disables every module in the category).
+            int tX = x + SIDEBAR_W - PADDING - CAT_TOGGLE_W;
+            int tY = catY + (24 - CAT_TOGGLE_H) / 2;
+            renderToggle(ctx, tX, tY, CAT_TOGGLE_W, CAT_TOGGLE_H, isCategoryAllEnabled(cat));
             catY += 26;
         }
+    }
+
+    private boolean isCategoryAllEnabled(ModuleCategory cat) {
+        List<Module> mods = ReevesClient.getInstance().getModuleManager().getByCategory(cat);
+        if (mods.isEmpty()) return false;
+        for (Module m : mods) if (!m.isEnabled()) return false;
+        return true;
+    }
+
+    private void setCategoryEnabled(ModuleCategory cat, boolean enabled) {
+        for (Module m : ReevesClient.getInstance().getModuleManager().getByCategory(cat)) {
+            m.setEnabled(enabled);
+        }
+        saveConfig();
+    }
+
+    /** Persists module/HUD state so toggles survive a restart. */
+    private void saveConfig() {
+        var cfg = ReevesClient.getInstance().getConfigManager();
+        if (cfg != null) cfg.save();
     }
 
     private void renderModuleList(DrawContext ctx, int x, int y, int h) {
@@ -129,6 +159,8 @@ public class SettingsScreen extends Screen {
 
     private void renderModuleSettings(DrawContext ctx, int x, int y, int w, int h) {
         ctx.fill(x, y, x + w, y + h, ColorUtil.RC_BG_PANEL);
+        settingToggleRefs.clear();
+        settingToggleRects.clear();
         if (selectedModule == null) return;
 
         Module m = selectedModule;
@@ -154,6 +186,8 @@ public class SettingsScreen extends Screen {
                 int toggleX = x + w - PADDING - 36;
                 int toggleY = dy - 1;
                 renderToggle(ctx, toggleX, toggleY, boolSetting.getValue());
+                settingToggleRefs.add(boolSetting);
+                settingToggleRects.add(new int[]{toggleX, toggleY, 36, 18});
             } else {
                 RenderUtil.drawText(ctx, "Value: " + setting.getValue(), x + PADDING, dy, ColorUtil.RC_ACCENT);
             }
@@ -179,6 +213,13 @@ public class SettingsScreen extends Screen {
         for (ModuleCategory cat : ModuleCategory.values()) {
             int cy = catSideY + catIdx * 26;
             if (mx >= catSideX && mx <= catSideX + SIDEBAR_W && my >= cy && my <= cy + 26) {
+                // Category-wide master toggle takes priority over selecting the category.
+                int tX = catSideX + SIDEBAR_W - PADDING - CAT_TOGGLE_W;
+                int tY = cy + (24 - CAT_TOGGLE_H) / 2;
+                if (mx >= tX && mx <= tX + CAT_TOGGLE_W && my >= tY && my <= tY + CAT_TOGGLE_H) {
+                    setCategoryEnabled(cat, !isCategoryAllEnabled(cat));
+                    return true;
+                }
                 selectedCategory = cat;
                 scrollOffset = 0;
                 selectedModule = null;
@@ -201,11 +242,22 @@ public class SettingsScreen extends Screen {
                 if (button == 0 && onToggle) {
                     clicked.toggle();
                     selectedModule = clicked;
+                    saveConfig();
                     return true;
                 }
 
                 if (button == 0) selectedModule = clicked;
-                if (button == 1) clicked.toggle();
+                if (button == 1) { clicked.toggle(); saveConfig(); }
+                return true;
+            }
+        }
+
+        // Per-setting boolean toggles in the right-hand settings panel.
+        for (int i = 0; i < settingToggleRects.size(); i++) {
+            int[] r = settingToggleRects.get(i);
+            if (mx >= r[0] && mx <= r[0] + r[2] && my >= r[1] && my <= r[1] + r[3]) {
+                settingToggleRefs.get(i).toggle();
+                saveConfig();
                 return true;
             }
         }
@@ -225,11 +277,18 @@ public class SettingsScreen extends Screen {
     private int getPanelH() { return Math.min(height - 20, 540); }
 
     private void renderToggle(DrawContext ctx, int x, int y, boolean enabled) {
-        int track = enabled ? ColorUtil.RC_ACCENT : 0xFF404055;
-        int thumbX = enabled ? x + 18 : x + 2;
-        ctx.fill(x, y + 4, x + 36, y + 14, track);
-        ctx.fill(x + 4, y, x + 32, y + 18, track);
-        ctx.fill(thumbX, y + 2, thumbX + 14, y + 16, 0xFFFFFFFF);
+        renderToggle(ctx, x, y, 36, 18, enabled);
+    }
+
+    /** Draws a switch-style toggle of arbitrary size. */
+    private void renderToggle(DrawContext ctx, int x, int y, int w, int h, boolean enabled) {
+        int track  = enabled ? ColorUtil.RC_ACCENT : 0xFF404055;
+        int inset  = Math.max(2, h / 4);
+        int thumb  = h - 4;
+        int thumbX = enabled ? x + w - thumb - 2 : x + 2;
+        ctx.fill(x, y + inset, x + w, y + h - inset, track);
+        ctx.fill(x + inset, y, x + w - inset, y + h, track);
+        ctx.fill(thumbX, y + 2, thumbX + thumb, y + h - 2, 0xFFFFFFFF);
     }
 
     @Override
