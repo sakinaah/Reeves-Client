@@ -62,6 +62,9 @@ public class SettingsScreen extends Screen {
 
         addDrawableChild(new RButton(px + getPanelW() - 185, py + getPanelH() - 30, 90, 22, "Capes",
             b -> client.setScreen(new CapeEditorScreen(this))));
+
+        addDrawableChild(new RButton(px + getPanelW() - 285, py + getPanelH() - 30, 95, 22, "Appearance",
+            b -> client.setScreen(new AppearanceScreen(this))));
     }
 
     @Override

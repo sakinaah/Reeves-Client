@@ -93,13 +93,6 @@ public class AppearanceScreen extends Screen {
         super.render(ctx, mouseX, mouseY, delta);
     }
 
-    private int labelYForToggle() {
-        // Mirror the layout math in init() for the toggle row.
-        int py = getPanelY();
-        int controlsY = py + 60; // base; adjusted below for preset rows is approximate
-        return controlsY; // label is positioned relative to toggle in render via offset
-    }
-
     private void renderPreview(DrawContext ctx, int x, int y, int w, int h) {
         RenderUtil.fillRoundedRect(ctx, x, y, w, h, 8, ColorUtil.RC_BG_PANEL);
         RenderUtil.drawBorder(ctx, x, y, w, h, 1, ColorUtil.RC_BORDER);
