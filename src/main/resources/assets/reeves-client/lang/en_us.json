@@ -18,6 +18,7 @@
   "key.reeves-client.open_hud_editor": "Open HUD Editor",
   "key.reeves-client.toggle_sprint": "Toggle Sprint",
   "key.reeves-client.toggle_sneak": "Toggle Sneak",
+  "key.reeves-client.toggle_item_lock": "Lock/Unlock Hovered Item",
 
   "module.reeves-client.fps_counter": "FPS Counter",
   "module.reeves-client.fps_counter.desc": "Displays your current frames per second.",
