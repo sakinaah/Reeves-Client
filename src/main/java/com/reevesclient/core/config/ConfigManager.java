@@ -14,7 +14,7 @@ import java.nio.file.*;
 
 /** Loads and saves all configuration as JSON under .minecraft/config/reeves-client/. */
 public class ConfigManager {
- 
+
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     private final Path configDir;
