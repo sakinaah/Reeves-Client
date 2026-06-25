@@ -48,7 +48,24 @@ public class HypixelAPIClient {
                 .GET()
                 .timeout(TIMEOUT)
                 .build();
+        return send(request, path);
+    }
 
+    /**
+     * GET a public Hypixel endpoint that does not require an API key
+     * (e.g. the Bazaar). Safe to call without the user configuring a key.
+     */
+    private CompletableFuture<Optional<JsonObject>> getJsonPublic(String path) {
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(BASE_URL + path))
+                .header("Accept", "application/json")
+                .GET()
+                .timeout(TIMEOUT)
+                .build();
+        return send(request, path);
+    }
+
+    private CompletableFuture<Optional<JsonObject>> send(HttpRequest request, String path) {
         return http.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                 .thenApply(response -> {
                     if (response.statusCode() != 200) {
@@ -89,6 +106,11 @@ public class HypixelAPIClient {
     /** Fetches SkyBlock Bazaar product list. */
     public CompletableFuture<Optional<JsonObject>> fetchBazaar() {
         return getJson("/skyblock/bazaar");
+    }
+
+    /** Fetches the SkyBlock Bazaar without requiring an API key (public endpoint). */
+    public CompletableFuture<Optional<JsonObject>> fetchBazaarPublic() {
+        return getJsonPublic("/skyblock/bazaar");
     }
 
     /** Fetches a page of Auction House data. */

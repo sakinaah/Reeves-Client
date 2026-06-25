@@ -18,7 +18,7 @@
   "key.reeves-client.open_hud_editor": "Open HUD Editor",
   "key.reeves-client.toggle_sprint": "Toggle Sprint",
   "key.reeves-client.toggle_sneak": "Toggle Sneak",
-  "key.reeves-client.toggle_item_lock": "Lock/Unlock Hovered Item",
+  "key.reeves-client.toggle_item_lock": "Item Lock (hold + click item)",
 
   "module.reeves-client.fps_counter": "FPS Counter",
   "module.reeves-client.fps_counter.desc": "Displays your current frames per second.",
@@ -85,6 +85,12 @@
   "module.reeves-client.profit_calculator.desc": "Calculate farming, crafting, and flipping profits.",
   "module.reeves-client.goal_tracker": "Goal Tracker",
   "module.reeves-client.goal_tracker.desc": "Set and track personal SkyBlock goals.",
+  "module.reeves-client.economy_tooltips": "Economy Tooltips",
+  "module.reeves-client.economy_tooltips.desc": "Shows Bazaar buy/sell prices in item tooltips.",
+  "module.reeves-client.item_protection": "Item Protection",
+  "module.reeves-client.item_protection.desc": "Lock items to prevent accidental dropping, selling or salvaging.",
+  "module.reeves-client.dungeon_hud": "Dungeon Tracker HUD",
+  "module.reeves-client.dungeon_hud.desc": "On-screen dungeon score, secrets, deaths and crypts.",
 
   "module.reeves-client.dungeon_rooms": "Dungeon Room Identifier",
   "module.reeves-client.dungeon_rooms.desc": "Identifies the current dungeon room and displays known secret locations.",

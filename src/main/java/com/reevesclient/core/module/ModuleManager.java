@@ -61,6 +61,7 @@ public class ModuleManager {
         register(new BazaarModule());
         register(new ProfitCalculatorModule());
         register(new GoalTrackerModule());
+        register(new EconomyTooltipModule());
 
         // ── Dungeons ───────────────────────────────────────────────────────
         register(new DungeonRoomModule());

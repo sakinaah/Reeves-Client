@@ -6,21 +6,20 @@ import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.util.InputUtil;
 import net.minecraft.item.ItemStack;
 import net.minecraft.screen.slot.Slot;
 import net.minecraft.screen.slot.SlotActionType;
 import net.minecraft.text.Text;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 /**
  * Item-protection guards for inventory menus:
+ *  - hold the Reeves lock key and click an item to lock/unlock it,
  *  - cancels click actions that would drop/move a locked item,
- *  - toggles a lock on the hovered slot with the Reeves lock key,
  *  - draws a small padlock on locked slots.
  *
  * All client-side: only the player's own clicks are cancelled before they turn
@@ -29,13 +28,18 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(HandledScreen.class)
 public abstract class MixinHandledScreen {
 
-    @Shadow protected Slot focusedSlot;
-
     private ItemProtectionModule reeves$module() {
         ReevesClient rc = ReevesClient.getInstance();
         if (rc == null || rc.getModuleManager() == null) return null;
         ItemProtectionModule m = rc.getModuleManager().get(ItemProtectionModule.class);
         return (m != null && m.isEnabled()) ? m : null;
+    }
+
+    /** True while the (re-bindable) lock key is physically held. */
+    private boolean reeves$lockKeyHeld() {
+        int code = KeyBindingHelper.getBoundKeyOf(ReevesClient.KEY_TOGGLE_ITEM_LOCK).getCode();
+        if (code == -1) return false;
+        return InputUtil.isKeyPressed(MinecraftClient.getInstance().getWindow(), code);
     }
 
     @Inject(method = "onMouseClick(Lnet/minecraft/screen/slot/Slot;IILnet/minecraft/screen/slot/SlotActionType;)V",
@@ -46,7 +50,22 @@ public abstract class MixinHandledScreen {
         if (m == null) return;
 
         ItemStack stack = slot != null ? slot.getStack() : ItemStack.EMPTY;
-        if (stack.isEmpty() || !m.isLocked(stack)) return;
+        if (stack.isEmpty()) return;
+
+        // Hold lock key + click toggles the lock instead of performing the action.
+        if (reeves$lockKeyHeld()) {
+            boolean nowLocked = m.toggleLock(stack);
+            MinecraftClient mc = MinecraftClient.getInstance();
+            if (mc.player != null) {
+                mc.player.sendMessage(Text.literal(nowLocked
+                        ? "§eItem locked — protected from drop/sell."
+                        : "§7Item unlocked."), true);
+            }
+            ci.cancel();
+            return;
+        }
+
+        if (!m.isLocked(stack)) return;
 
         // Always block dropping/throwing a locked item.
         if (actionType == SlotActionType.THROW) {
@@ -65,24 +84,6 @@ public abstract class MixinHandledScreen {
         }
     }
 
-    @Inject(method = "keyPressed(III)Z", at = @At("HEAD"), cancellable = true)
-    private void reeves$toggleLockKey(int keyCode, int scanCode, int modifiers,
-                                      CallbackInfoReturnable<Boolean> cir) {
-        ItemProtectionModule m = reeves$module();
-        if (m == null || focusedSlot == null || !focusedSlot.hasStack()) return;
-        int bound = KeyBindingHelper.getBoundKeyOf(ReevesClient.KEY_TOGGLE_ITEM_LOCK).getCode();
-        if (keyCode != bound || bound == -1) return;
-
-        boolean nowLocked = m.toggleLock(focusedSlot.getStack());
-        MinecraftClient mc = MinecraftClient.getInstance();
-        if (mc.player != null) {
-            mc.player.sendMessage(Text.literal(nowLocked
-                    ? "§eItem locked — protected from drop/sell."
-                    : "§7Item unlocked."), true);
-        }
-        cir.setReturnValue(true);
-    }
-
     @Inject(method = "drawSlot(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/screen/slot/Slot;)V",
             at = @At("TAIL"))
     private void reeves$drawLockIcon(DrawContext ctx, Slot slot, CallbackInfo ci) {
@@ -99,7 +100,7 @@ public abstract class MixinHandledScreen {
     private void reeves$notifyBlocked() {
         MinecraftClient mc = MinecraftClient.getInstance();
         if (mc.player != null) {
-            mc.player.sendMessage(Text.literal("§eThat item is locked. Press your Reeves lock key to unlock it."), true);
+            mc.player.sendMessage(Text.literal("§eThat item is locked. Hold your Reeves lock key and click it to unlock."), true);
         }
     }
 }
