@@ -1,0 +1,210 @@
+[
+  {
+    "id": "entrance",
+    "name": "Entrance",
+    "type": "SPAWN",
+    "difficulty": "none",
+    "secrets": 0,
+    "notes": ["Starting room — no secrets here."]
+  },
+  {
+    "id": "storage_room",
+    "name": "Storage Room",
+    "type": "NORMAL",
+    "difficulty": "easy",
+    "secrets": 2,
+    "notes": []
+  },
+  {
+    "id": "hallway",
+    "name": "Hallway",
+    "type": "NORMAL",
+    "difficulty": "easy",
+    "secrets": 1,
+    "notes": []
+  },
+  {
+    "id": "library",
+    "name": "Library",
+    "type": "NORMAL",
+    "difficulty": "medium",
+    "secrets": 3,
+    "notes": []
+  },
+  {
+    "id": "spike_room",
+    "name": "Spike Room",
+    "type": "NORMAL",
+    "difficulty": "medium",
+    "secrets": 2,
+    "notes": ["Watch for spike traps on the floor."]
+  },
+  {
+    "id": "tomb_of_the_undead",
+    "name": "Tomb of the Undead",
+    "type": "NORMAL",
+    "difficulty": "hard",
+    "secrets": 3,
+    "notes": []
+  },
+  {
+    "id": "battle_room",
+    "name": "Battle Room",
+    "type": "NORMAL",
+    "difficulty": "hard",
+    "secrets": 2,
+    "notes": []
+  },
+  {
+    "id": "fairy_room",
+    "name": "Fairy Room",
+    "type": "FAIRY",
+    "difficulty": "none",
+    "secrets": 1,
+    "notes": ["Fairy Soul located inside. Talk to the Fairy to collect."]
+  },
+  {
+    "id": "blood_room",
+    "name": "The Blood Room",
+    "type": "BLOOD",
+    "difficulty": "hard",
+    "secrets": 0,
+    "notes": ["Defeat The Watcher to open the door."]
+  },
+  {
+    "id": "chest_room",
+    "name": "Chest Room",
+    "type": "NORMAL",
+    "difficulty": "easy",
+    "secrets": 3,
+    "notes": []
+  },
+  {
+    "id": "puzzle_box",
+    "name": "Box Puzzle",
+    "type": "PUZZLE",
+    "difficulty": "medium",
+    "secrets": 0,
+    "notes": ["Push all wool blocks onto the correct pressure plates.", "Order does not matter — just get all blocks in place."]
+  },
+  {
+    "id": "puzzle_selector",
+    "name": "Correct Selector",
+    "type": "PUZZLE",
+    "difficulty": "medium",
+    "secrets": 0,
+    "notes": ["Click the item on the podium that matches the description.", "Read the hint text carefully before clicking."]
+  },
+  {
+    "id": "puzzle_ice_walk",
+    "name": "Ice Walk",
+    "type": "PUZZLE",
+    "difficulty": "easy",
+    "secrets": 0,
+    "notes": ["Slide across ice tiles to cover every tile once.", "Plan your route before starting — you cannot undo a move."]
+  },
+  {
+    "id": "puzzle_boulder",
+    "name": "Boulder",
+    "type": "PUZZLE",
+    "difficulty": "medium",
+    "secrets": 0,
+    "notes": ["Push boulders into holes to fill them all.", "Some boulders can be pushed through multiple holes — plan ahead."]
+  },
+  {
+    "id": "puzzle_blaze",
+    "name": "Blaze Puzzle",
+    "type": "PUZZLE",
+    "difficulty": "hard",
+    "secrets": 0,
+    "notes": ["Kill blazes in the order of their HP bars: highest HP first.", "Check the chat for HP updates as you kill each one."]
+  },
+  {
+    "id": "puzzle_creeper",
+    "name": "Creeper Puzzle",
+    "type": "PUZZLE",
+    "difficulty": "medium",
+    "secrets": 0,
+    "notes": ["Place the prismarine blocks to complete the circuit.", "Extend the lines from the terminals to meet in the center."]
+  },
+  {
+    "id": "puzzle_water_board",
+    "name": "Water Board",
+    "type": "PUZZLE",
+    "difficulty": "hard",
+    "secrets": 0,
+    "notes": ["Adjust levers to match the colored pattern on the board.", "Pull all matching levers before stepping on the pressure plate."]
+  },
+  {
+    "id": "puzzle_tic_tac_toe",
+    "name": "Tic-Tac-Toe",
+    "type": "PUZZLE",
+    "difficulty": "easy",
+    "secrets": 0,
+    "notes": ["Play Tic-Tac-Toe against the AI. Win or draw to complete.", "Start with the center tile when possible for best odds."]
+  },
+  {
+    "id": "trap_simon_says",
+    "name": "Simon Says",
+    "type": "TRAP",
+    "difficulty": "easy",
+    "secrets": 0,
+    "notes": ["Click the levers in the correct order shown by the lights.", "Memorize the sequence before starting."]
+  },
+  {
+    "id": "boss_bonzo",
+    "name": "Bonzo's Lair",
+    "type": "BOSS",
+    "difficulty": "hard",
+    "secrets": 0,
+    "notes": ["Destroy the snowballs Bonzo throws to stun him.", "Jump to dodge the ice-spike attack."]
+  },
+  {
+    "id": "boss_scarf",
+    "name": "Scarf's Room",
+    "type": "BOSS",
+    "difficulty": "hard",
+    "secrets": 0,
+    "notes": ["Kill the spawned mobs in each phase to progress.", "Watch for Scarf's teleport — he repositions between phases."]
+  },
+  {
+    "id": "boss_professor",
+    "name": "The Professor's Room",
+    "type": "BOSS",
+    "difficulty": "hard",
+    "secrets": 0,
+    "notes": ["Destroy the 4 guardian guardians before fighting The Professor.", "Guardians respawn if you leave the room — keep pressure on."]
+  },
+  {
+    "id": "boss_thorn",
+    "name": "Thorn's Room",
+    "type": "BOSS",
+    "difficulty": "hard",
+    "secrets": 0,
+    "notes": ["Break the glowstone on the pillars to expose Thorn.", "Use range attacks during the vine-grab phase."]
+  },
+  {
+    "id": "boss_livid",
+    "name": "Livid's Room",
+    "type": "BOSS",
+    "difficulty": "hard",
+    "secrets": 0,
+    "notes": ["Find and kill the REAL Livid — only one of the clones has a name.", "Real Livid is darker and has no §c prefix in the name tag."]
+  },
+  {
+    "id": "boss_sadan",
+    "name": "Sadan's Room",
+    "type": "BOSS",
+    "difficulty": "hard",
+    "secrets": 0,
+    "notes": ["Destroy the giant golems in order of their tier (lowest first).", "Dodge Sadan's stomp attack — it deals massive knockback."]
+  },
+  {
+    "id": "boss_necron",
+    "name": "Necron's Hall",
+    "type": "BOSS",
+    "difficulty": "hard",
+    "secrets": 0,
+    "notes": ["Follow the multi-phase order: Maxor → Storm → Goldor → Necron.", "Each wither guardian must be defeated before Necron is vulnerable."]
+  }
+]

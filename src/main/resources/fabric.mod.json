@@ -1,0 +1,45 @@
+{
+  "schemaVersion": 1,
+  "id": "reeves-client",
+  "version": "${version}",
+  "name": "Reeves Client",
+  "description": "A modern, open-source Hypixel companion client. Quality-of-life features, HUD customization, SkyBlock tools, and performance optimizations — fully Hypixel-compliant.",
+  "authors": [
+    "Reeves Client Contributors"
+  ],
+  "contact": {
+    "sources": "https://github.com/reeves-client/reeves-client",
+    "issues": "https://github.com/reeves-client/reeves-client/issues"
+  },
+  "license": "MIT",
+  "icon": "assets/reeves-client/textures/gui/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "com.reevesclient.ReevesClient"
+    ],
+    "modmenu": [
+      "com.reevesclient.ui.ModMenuIntegration"
+    ]
+  },
+  "mixins": [
+    "reeves-client.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "minecraft": "~1.21.10",
+    "java": ">=21",
+    "fabric-api": "*"
+  },
+  "suggests": {
+    "modmenu": "*"
+  },
+  "custom": {
+    "modmenu": {
+      "links": {
+        "modmenu.discord": "https://discord.gg/reevesclient",
+        "modmenu.support": "https://github.com/reeves-client/reeves-client/issues"
+      }
+    }
+  }
+}

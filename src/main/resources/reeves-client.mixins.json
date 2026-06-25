@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "package": "com.reevesclient.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "client": [
+    "MixinGameRenderer",
+    "MixinInGameHud",
+    "MixinPlayerEntityRenderer",
+    "MixinChatScreen",
+    "MixinWorldRenderer",
+    "MixinEntityRenderer"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
