@@ -1,97 +1,117 @@
 # Reeves Client
 
-Reeves Client is a modern Minecraft client built exclusively for Hypixel players, combining performance, customization, and quality-of-life features in a clean and professional package. Designed around the latest supported Minecraft versions, Reeves Client provides powerful SkyBlock utilities, PvP enhancements, performance optimizations, detailed statistics tracking, and an advanced customization system while maintaining strict compliance with Hypixel's rules.
+Reeves Client is a modern, open-source (MIT) Hypixel companion client for Fabric.
+It focuses on quality-of-life, customization, and performance while staying
+strictly within Hypixel's rules — every feature is informational and client-side,
+with no automation of any kind.
 
-From Dungeons and Garden progression to Bazaar tracking, Auction House analysis, session statistics, FPS improvements, and personalized cosmetics, Reeves Client is designed to be the all-in-one companion for every Hypixel experience.
-
-Built with a modern Fabric-based architecture, Reeves Client prioritizes speed, stability, visual polish, and long-term support, delivering a premium experience without compromising fairness or player safety.
+Built on a clean, modular Fabric architecture for Minecraft 1.21.10.
 
 ## Features
 
-- **HUD System** — FPS, CPS, Ping, Coordinates, Direction, Armor, Potions, Keystrokes, Clock, Session Timer, Weather — all drag-and-drop repositionable
-- **Performance** — Entity render controls, particle reducer, one-click optimization profiles
-- **SkyBlock** — Skill tracker, slayer tracker, collection tracker, minion tracker, Garden dashboard, SkyBlock calendar & mayor, Bazaar browser, Auction House browser, profit calculators, goal tracker
-- **Dungeons** — Room identifier, secret waypoints (informational), party stats, score tracker
-- **PvP** — Custom crosshair, hit effect customization
-- **Custom Capes** — Upload any image, automatic 64×32 normalization, multiple profiles, live preview *(world rendering temporarily disabled on 1.21.10 — see Known Limitations)*
-- **Full Settings UI** — Searchable settings, category navigation, drag-and-drop HUD editor
+### HUD
+- FPS, CPS, Ping, Coordinates, Direction, Armor, Potions, Keystrokes, Clock,
+  Session Timer, Weather — all drag-and-drop repositionable in the HUD editor.
+- **Dungeon Tracker HUD** — floor, time, secrets, deaths, crypts, puzzles, blood-room
+  timer, run-complete, estimated score/grade.
+- **Dungeon Map overlay** — renders the in-game dungeon map item as a draggable overlay.
+- Per-element theming, opacity, background toggle; **Reset All** to defaults.
+
+### Appearance (unified theming)
+- **Settings → Appearance**: colour presets (Midnight, Crimson, Emerald, Amethyst,
+  Aqua, Light), accent-hue slider, panel-opacity slider, text-shadow toggle, live
+  preview. Applies to the whole UI at once and persists.
+
+### SkyBlock & Economy
+- Skill / slayer / collection / minion trackers, Garden dashboard, SkyBlock calendar.
+- **Economy tooltips** — Bazaar buy/sell prices in item tooltips (public API, no key
+  required), cached and refreshed off-thread.
+- Bazaar & Auction House browsers, profit calculators, goal tracker.
+
+### Dungeons (informational only)
+- Room identifier, secret-waypoint data, party stats, score/secrets tracking,
+  blood-room timer, run completion.
+
+### Item Protection
+- Lock individual items (by SkyBlock id or vanilla id) to prevent accidental
+  dropping / selling / salvaging. Hold the lock key (default **L**) and click an
+  item to lock/unlock it. Locked items show a padlock and a tooltip line.
+
+### PvP
+- Custom crosshair, hit-effect customization, plus the FPS/CPS/Ping/Keystrokes/
+  Armor/Potion HUDs above.
+
+### Tools
+- Item browser with registry search and an **inline calculator** (type `2.5m * 3`
+  or `=(64*9)/64` in the search bar).
+- Custom capes — upload an image, 64×32 normalization, multiple profiles, live
+  preview *(see Known Limitations for in-world rendering)*.
+
+### Performance
+- Entity-render controls, particle reducer, one-click graphics profiles (applied
+  once on change, not every tick), HUD ticks skipped while hidden, throttled
+  SkyBlock/dungeon parsing, off-thread API caching.
+
+## Keybinds (rebindable in Options → Controls)
+- **Right Shift** — open the Reeves menu
+- **L** — item lock (hold + click an item)
+- HUD editor and other actions are accessible from the menu.
 
 ## Compliance
+- No automation, macros, auto-clickers, or scripted actions.
+- No packet manipulation, no hidden-information exploitation, no aim/reach changes.
+- All dungeon/SkyBlock features are read-only overlays — the player performs every action.
 
-Reeves Client is built with player safety as the top priority:
+## Known Limitations
+The 1.21.10 render-pipeline rewrite changed several rendering APIs. Status:
 
-- No automation of any kind
-- No macros, auto-clickers, or scripted actions
-- No packet manipulation
-- No hidden-information exploitation
-- No aim assistance or reach modification
-- Dungeon features are informational overlays only — all actions performed by the player
+- **3D world rendering** — re-implemented on Fabric's `WorldRenderEvents` (waypoint
+  boxes). Pending final visual verification on live servers.
+- **Custom cape in-world rendering** — upload/management UI works; the cape is not
+  yet drawn on the player model.
+- **In-world dungeon secret boxes / map→world room mapping** — needs live coordinate
+  calibration; the on-screen dungeon HUD and map overlay work today.
+- **Full JEI-style crafting recipes** — the item browser does search + item info;
+  full recipe display depends on the reworked 1.21.10 recipe-display API and is not
+  yet wired.
 
 ## Requirements
-
 - Minecraft 1.21.10
 - Fabric Loader 0.19.3+
 - Fabric API
 - Java 21
 
-## Known Limitations
-
-The 1.21.10 render-pipeline rewrite changed several internal APIs. Two features
-are temporarily disabled while they are ported to the new rendering system:
-
-- **Custom cape in-world rendering** — cape upload/management UI still works; the cape is not yet drawn on the player model.
-- **3D world-space waypoint beacons** — waypoint data and the waypoint list work; the in-world beacon visuals are off.
-
-All other features are fully functional.
-
 ## Installation
-
 1. Install [Fabric Loader](https://fabricmc.net/use/) for Minecraft 1.21.10.
-2. Download the latest `reeves-client-*.jar` from the [Releases](../../releases) page.
+2. Download the latest `reeves-client-*.jar` from [Releases](../../releases).
 3. Download [Fabric API](https://modrinth.com/mod/fabric-api) for 1.21.10.
-4. Place both jars in your `.minecraft/mods/` folder (or your launcher's mods folder).
-5. Launch Minecraft and press **Right Shift** to open the Reeves Client menu.
+4. Put both jars in your `mods/` folder.
+5. Launch and press **Right Shift**.
 
 ## Building
-
 ```bash
-./gradlew build
+./gradlew build   # requires JDK 21; output in build/libs/
 ```
 
-The compiled jar will be in `build/libs/`.
-
-## Development Setup
-
-1. Clone the repository
-2. Run `./gradlew genSources` to generate Minecraft sources
-3. Open in IntelliJ IDEA (File → Open → select the project root)
-4. Run the `Minecraft Client` run configuration
-
 ## Configuration
+Stored in `.minecraft/config/reeves-client/`:
+- `general.json` — global settings, theme, API key
+- `modules.json` — per-module enable state + settings (incl. item lock-list)
+- `hud.json` — HUD positions/scales/visibility/theming
+- `waypoints.json`, `goals.json`, `cape_config.json`
 
-All settings are stored in `.minecraft/config/reeves-client/`:
+## Hypixel API Key (optional)
+Bazaar tooltips work without a key (public endpoint). For Auction House and player
+stats, set a key in Settings → General (`/api new` on Hypixel). Stored locally only.
 
-- `general.json` — Global settings (API key, accent color, etc.)
-- `modules.json` — Per-module enable state and settings
-- `hud.json` — HUD element positions, scales, and visibility
-- `waypoints.json` — Saved custom waypoints
-- `goals.json` — Personal SkyBlock goals
+## Credits & License
+MIT License — see [LICENSE](LICENSE).
 
-## Hypixel API Key
-
-To use Bazaar, Auction House, and player statistics features, you need a Hypixel API key:
-
-1. Join Hypixel and run `/api new`
-2. Open Reeves Client settings → General → paste your API key
-
-The key is stored locally and never shared.
-
-## License
-
-MIT License — see [LICENSE](LICENSE)
+Some features are *inspired by* community mods (JEI, Skytils, SkyHanni) and were
+implemented **clean-room** — see [ACKNOWLEDGEMENTS.md](ACKNOWLEDGEMENTS.md). No
+third-party copyleft code is included.
 
 ## Contributing
-
-Pull requests welcome. Please read [CONTRIBUTING.md](CONTRIBUTING.md) before submitting.
-
-All contributions must follow the same compliance rules as the main client — no features that could provide unfair advantages or violate Hypixel's rules.
+PRs welcome — see [CONTRIBUTING.md](CONTRIBUTING.md). All contributions must follow
+the same compliance rules (no unfair-advantage features) and must not paste source
+from copyleft-licensed mods (describe behaviour and implement it fresh).

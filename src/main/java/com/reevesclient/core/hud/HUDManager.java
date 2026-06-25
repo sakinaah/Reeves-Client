@@ -29,6 +29,7 @@ public class HUDManager {
         register(new WeatherHUD());
         register(new DungeonHUD());
         register(new DungeonMapHUD());
+        register(new RpgBarsHUD());
 
         ReevesClient.getInstance().getConfigManager().loadHUD(this);
         ReevesClient.LOGGER.info("HUDManager: {} elements loaded.", elements.size());
@@ -72,6 +73,29 @@ public class HUDManager {
         el.render(context, tickDelta);
 
         context.getMatrices().popMatrix();
+    }
+
+    // ── Layout presets (visibility sets) ──────────────────────────────────────
+    // A null set means "everything visible".
+    private static final Map<String, Set<String>> LAYOUTS = new LinkedHashMap<>();
+    static {
+        LAYOUTS.put("Default",  null);
+        LAYOUTS.put("SkyBlock", Set.of("coordinates", "clock", "session_timer", "rpg_bars", "fps_counter", "ping_display"));
+        LAYOUTS.put("Dungeons", Set.of("dungeon_hud", "dungeon_map", "fps_counter", "ping_display", "coordinates"));
+        LAYOUTS.put("PvP",      Set.of("fps_counter", "cps_counter", "ping_display", "keystrokes", "armor_status", "potion_effects"));
+        LAYOUTS.put("Minimal",  Set.of("fps_counter", "coordinates"));
+    }
+
+    public static Set<String> layoutNames() { return LAYOUTS.keySet(); }
+
+    /** Applies a named layout by toggling element visibility, then saves. */
+    public void applyLayout(String name) {
+        Set<String> visible = LAYOUTS.get(name);
+        for (HUDElement el : elements) {
+            el.setVisible(visible == null || visible.contains(el.getId()));
+        }
+        var cfg = ReevesClient.getInstance().getConfigManager();
+        if (cfg != null) cfg.save();
     }
 
     private void register(HUDElement el) {

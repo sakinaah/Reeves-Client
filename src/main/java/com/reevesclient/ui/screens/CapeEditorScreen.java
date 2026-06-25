@@ -41,13 +41,44 @@ public class CapeEditorScreen extends Screen {
         int btnY = height - 36;
 
         addDrawableChild(new RButton(btnX, btnY, 90, 22, "Upload", b -> openFileChooser()));
-        addDrawableChild(new RButton(btnX + 100, btnY, 90, 22, "Remove", b -> removeCurrentCape()));
+        addDrawableChild(new RButton(btnX + 95, btnY, 90, 22, "Export", b -> exportCurrentCape()));
+        addDrawableChild(new RButton(btnX + 190, btnY, 90, 22, "Remove", b -> removeCurrentCape()));
         addDrawableChild(new RButton(width - 100, btnY, 90, 22, "Back", b -> {
             ReevesClient.getInstance().getConfigManager().save();
             client.setScreen(parent);
         }));
 
         addDrawableChild(new RButton(10, btnY, 90, 22, "New Profile", b -> createProfile()));
+        addDrawableChild(new RButton(10, btnY - 28, 130, 22, "Cycle Visibility", b -> cycleVisibility()));
+    }
+
+    private void exportCurrentCape() {
+        CapeProfile p = getSelectedProfile();
+        if (p == null || p.getTexturePath() == null) return;
+        java.nio.file.Path src = p.getTexturePath();
+        String suggested = p.getName().replaceAll("[^a-zA-Z0-9-_]", "_") + ".png";
+        Thread.ofVirtual().name("reeves-cape-export").start(() ->
+            javax.swing.SwingUtilities.invokeLater(() -> {
+                javax.swing.JFileChooser fc = new javax.swing.JFileChooser();
+                fc.setSelectedFile(new java.io.File(suggested));
+                if (fc.showSaveDialog(null) == javax.swing.JFileChooser.APPROVE_OPTION) {
+                    try {
+                        java.nio.file.Files.copy(src, fc.getSelectedFile().toPath(),
+                                java.nio.file.StandardCopyOption.REPLACE_EXISTING);
+                        ReevesClient.LOGGER.info("Exported cape '{}'.", p.getName());
+                    } catch (Exception e) {
+                        ReevesClient.LOGGER.warn("Cape export failed: {}", e.getMessage());
+                    }
+                }
+            }));
+    }
+
+    private void cycleVisibility() {
+        CapeProfile p = getSelectedProfile();
+        if (p == null) return;
+        CapeProfile.Visibility[] vals = CapeProfile.Visibility.values();
+        p.setVisibility(vals[(p.getVisibility().ordinal() + 1) % vals.length]);
+        capeManager.setActiveProfile(p); // persists
     }
 
     @Override

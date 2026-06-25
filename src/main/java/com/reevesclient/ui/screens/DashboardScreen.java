@@ -44,8 +44,8 @@ public class DashboardScreen extends Screen {
         addDrawableChild(new RButton(width - 130, btnY, 120, 22, "HUD Editor", b ->
             client.setScreen(new HUDEditorScreen(this))));
 
-        addDrawableChild(new RButton(width - 250, btnY, 110, 22, "Items", b ->
-            client.setScreen(new ItemBrowserScreen(this))));
+        addDrawableChild(new RButton(width - 250, btnY, 110, 22, "Items & Recipes", b ->
+            client.setScreen(new JeiBrowserScreen(this))));
 
         addDrawableChild(new RButton(PADDING, btnY, 120, 22, "Settings", b ->
             client.setScreen(new SettingsScreen(this))));

@@ -32,7 +32,7 @@ public class ReevesClient implements ClientModInitializer {
 
     public static final String MOD_ID = "reeves-client";
     public static final String MOD_NAME = "Reeves Client";
-    public static final String VERSION = "1.1.0";
+    public static final String VERSION = "1.2.0";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_NAME);
 
     // Global singletons — accessed via ReevesClient.getInstance().*
@@ -40,6 +40,7 @@ public class ReevesClient implements ClientModInitializer {
 
     private ConfigManager configManager;
     private ThemeManager themeManager;
+    private com.reevesclient.core.jei.JeiManager jeiManager;
     private ModuleManager moduleManager;
     private HUDManager hudManager;
     private CapeManager capeManager;
@@ -68,8 +69,11 @@ public class ReevesClient implements ClientModInitializer {
         hypixelAPI      = new HypixelAPIClient();
         skyBlockAPI     = new SkyBlockAPIClient();
 
+        jeiManager      = new com.reevesclient.core.jei.JeiManager();
+
         configManager.load();
         themeManager.load(configManager); // apply saved palette before anything renders
+        jeiManager.init();
         moduleManager.init();
         hudManager.init();
         capeManager.init();
@@ -144,6 +148,8 @@ public class ReevesClient implements ClientModInitializer {
                 if (dsm != null) dsm.onNewRun();
                 SecretWaypointModule swm = moduleManager.get(SecretWaypointModule.class);
                 if (swm != null) swm.onNewRun();
+                var dbm = moduleManager.get(com.reevesclient.modules.dungeons.DungeonBossModule.class);
+                if (dbm != null) dbm.onNewRun();
             }
         });
 
@@ -174,6 +180,7 @@ public class ReevesClient implements ClientModInitializer {
     public static ReevesClient getInstance()  { return instance; }
     public ConfigManager  getConfigManager()  { return configManager; }
     public ThemeManager   getThemeManager()   { return themeManager; }
+    public com.reevesclient.core.jei.JeiManager getJeiManager() { return jeiManager; }
     public ModuleManager  getModuleManager()  { return moduleManager; }
     public HUDManager     getHUDManager()     { return hudManager; }
     public CapeManager    getCapeManager()    { return capeManager; }

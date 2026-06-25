@@ -94,6 +94,22 @@ public class EconomyTooltipModule extends Module {
         bazaar.putAll(next);
     }
 
+    /** Bazaar instant-sell price for a SkyBlock id, or 0 if unknown. */
+    public double getSellPrice(String skyblockId) {
+        if (skyblockId == null || skyblockId.isEmpty()) return 0;
+        double[] p = bazaar.get(skyblockId.toUpperCase());
+        return p == null ? 0 : p[1];
+    }
+
+    /** Bazaar instant-buy price for a SkyBlock id, or 0 if unknown. */
+    public double getBuyPrice(String skyblockId) {
+        if (skyblockId == null || skyblockId.isEmpty()) return 0;
+        double[] p = bazaar.get(skyblockId.toUpperCase());
+        return p == null ? 0 : p[0];
+    }
+
+    public boolean hasBazaarData() { return !bazaar.isEmpty(); }
+
     /** Formats a coin amount like 1.2M / 340.5k / 980. */
     public static String formatCoins(double v) {
         if (v >= 1_000_000_000) return String.format("%.2fB", v / 1_000_000_000);

@@ -43,6 +43,9 @@ public class DungeonHUD extends HUDElement {
         if (m.showDeaths())  lines.add("Deaths: " + m.getDeaths());
         if (m.getTotalPuzzles() > 0) lines.add("Puzzles: " + m.getCompletedPuzzles() + "/" + m.getTotalPuzzles());
         if (m.isBloodOpen()) lines.add("Blood: " + m.getBloodElapsedString());
+        com.reevesclient.modules.dungeons.DungeonBossModule boss =
+                ReevesClient.getInstance().getModuleManager().get(com.reevesclient.modules.dungeons.DungeonBossModule.class);
+        if (boss != null && boss.isEnabled() && !boss.getBossLabel().isEmpty()) lines.add("Boss: " + boss.getBossLabel());
         if (m.showScore())   lines.add("Score: ~" + m.getEstimatedScore() + " (" + m.getEstimatedGrade() + ")");
         if (m.isCleared())   lines.add("✔ CLEARED");
 

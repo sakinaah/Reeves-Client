@@ -45,6 +45,10 @@ public abstract class MixinChatScreen {
                 mm.get(com.reevesclient.modules.dungeons.DungeonScoreModule.class);
         if (dsm != null) dsm.onChat(plain);
 
+        com.reevesclient.modules.dungeons.DungeonBossModule dbm =
+                mm.get(com.reevesclient.modules.dungeons.DungeonBossModule.class);
+        if (dbm != null) dbm.onChat(plain);
+
         // Secret waypoints — detect "You found a Secret!" line
         SecretWaypointModule swm = mm.get(SecretWaypointModule.class);
         if (swm != null && plain.contains("You found a Secret")) {

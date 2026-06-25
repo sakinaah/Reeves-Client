@@ -62,6 +62,7 @@ public class ModuleManager {
         register(new ProfitCalculatorModule());
         register(new GoalTrackerModule());
         register(new EconomyTooltipModule());
+        register(new SkyblockStatsModule());
 
         // ── Dungeons ───────────────────────────────────────────────────────
         register(new DungeonRoomModule());
@@ -69,6 +70,8 @@ public class ModuleManager {
         register(new SecretWaypointModule());
         register(new DungeonPartyModule());
         register(new DungeonScoreModule());
+        register(new DungeonBossModule());
+        register(new DungeonChestValueModule());
 
         // ── PvP ────────────────────────────────────────────────────────────
         register(new CrosshairModule());

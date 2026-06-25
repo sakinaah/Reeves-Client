@@ -54,6 +54,15 @@ public class HUDEditorScreen extends Screen {
         addDrawableChild(new RButton(12, height - 30, 110, 22, "Theme", b -> {
             if (selected != null) selected.cycleTheme();
         }));
+
+        // Layout presets across the top.
+        int lx = 12, ly = 12, lw = 78, lh = 20, gap = 4;
+        for (String name : HUDManager.layoutNames()) {
+            final String layout = name;
+            addDrawableChild(new RButton(lx, ly, lw, lh, name,
+                    b -> ReevesClient.getInstance().getHUDManager().applyLayout(layout)));
+            lx += lw + gap;
+        }
     }
 
     @Override
@@ -73,7 +82,7 @@ public class HUDEditorScreen extends Screen {
 
         // Info bar at bottom
         ctx.fill(0, height - 36, width, height, 0xCC000000);
-        RenderUtil.drawText(ctx, "Drag to move  |  Scroll to scale  |  Right-click to toggle  |  Shift = snap to grid",
+        RenderUtil.drawText(ctx, "Drag move  |  Scroll scale  |  Alt+Scroll opacity  |  Left-click theme  |  Right-click toggle  |  Shift snap",
                 8, height - 26, ColorUtil.RC_TEXT_MUTED);
 
         if (selected != null) {

@@ -39,9 +39,21 @@ public class SettingsScreen extends Screen {
     private static final int CAT_TOGGLE_W = 28;
     private static final int CAT_TOGGLE_H = 14;
 
-    // Boolean-setting toggle hit-boxes captured during render of the settings panel.
-    private final java.util.List<BooleanSetting> settingToggleRefs  = new java.util.ArrayList<>();
-    private final java.util.List<int[]>          settingToggleRects = new java.util.ArrayList<>();
+    // Interactive setting controls captured during render of the settings panel.
+    // kind: 'B' boolean toggle, 'N' int/float slider, 'E' enum cycle, 'C' colour swatch.
+    private static final class SettingControl {
+        final ModuleSetting<?> setting; final int x, y, w, h; final char kind;
+        SettingControl(ModuleSetting<?> s, int x, int y, int w, int h, char kind) {
+            this.setting = s; this.x = x; this.y = y; this.w = w; this.h = h; this.kind = kind;
+        }
+        boolean hit(double mx, double my) { return mx >= x && mx <= x + w && my >= y && my <= y + h; }
+    }
+    private final java.util.List<SettingControl> settingControls = new java.util.ArrayList<>();
+    private SettingControl draggingControl = null;
+
+    private static final int[] COLOR_PALETTE = {
+        0xFF5B8DEE, 0xFFE53935, 0xFF4CAF50, 0xFFFF9800, 0xFFB061FF, 0xFF00BCD4, 0xFFFFFFFF, 0xFF000000
+    };
 
     public SettingsScreen(Screen parent) {
         super(Text.literal("Settings"));
@@ -162,8 +174,7 @@ public class SettingsScreen extends Screen {
 
     private void renderModuleSettings(DrawContext ctx, int x, int y, int w, int h) {
         ctx.fill(x, y, x + w, y + h, ColorUtil.RC_BG_PANEL);
-        settingToggleRefs.clear();
-        settingToggleRects.clear();
+        settingControls.clear();
         if (selectedModule == null) return;
 
         Module m = selectedModule;
@@ -179,23 +190,61 @@ public class SettingsScreen extends Screen {
         ctx.fill(x + PADDING, dy, x + w - PADDING, dy + 1, ColorUtil.RC_BORDER);
         dy += 8;
 
-        // Settings list
+        // Settings list — every setting type gets an interactive control.
         for (ModuleSetting<?> setting : m.getSettings()) {
+            int labelY = dy;
             RenderUtil.drawText(ctx, setting.getDisplayName(), x + PADDING, dy, ColorUtil.RC_TEXT);
             dy += 12;
             RenderUtil.drawText(ctx, setting.getDescription(), x + PADDING, dy, ColorUtil.RC_TEXT_MUTED);
-            dy += 10;
-            if (setting instanceof BooleanSetting boolSetting) {
-                int toggleX = x + w - PADDING - 36;
-                int toggleY = dy - 1;
-                renderToggle(ctx, toggleX, toggleY, boolSetting.getValue());
-                settingToggleRefs.add(boolSetting);
-                settingToggleRects.add(new int[]{toggleX, toggleY, 36, 18});
+            dy += 12;
+
+            if (setting instanceof BooleanSetting bs) {
+                int tx = x + w - PADDING - 36, ty = labelY - 1;
+                renderToggle(ctx, tx, ty, bs.getValue());
+                settingControls.add(new SettingControl(setting, tx, ty, 36, 18, 'B'));
+            } else if (setting instanceof ModuleSetting.IntSetting is) {
+                String v = String.valueOf(is.getValue());
+                RenderUtil.drawText(ctx, v, x + w - PADDING - RenderUtil.textWidth(v), labelY, ColorUtil.RC_ACCENT);
+                int sx = x + PADDING, sw = w - PADDING * 2;
+                float pct = (is.getValue() - is.getMin()) / (float) Math.max(1, is.getMax() - is.getMin());
+                renderSettingSlider(ctx, sx, dy, sw, pct);
+                settingControls.add(new SettingControl(setting, sx, dy - 2, sw, 12, 'N'));
+                dy += 12;
+            } else if (setting instanceof ModuleSetting.FloatSetting fs) {
+                String v = String.format("%.2f", fs.getValue());
+                RenderUtil.drawText(ctx, v, x + w - PADDING - RenderUtil.textWidth(v), labelY, ColorUtil.RC_ACCENT);
+                int sx = x + PADDING, sw = w - PADDING * 2;
+                float pct = (fs.getValue() - fs.getMin()) / Math.max(0.0001f, fs.getMax() - fs.getMin());
+                renderSettingSlider(ctx, sx, dy, sw, pct);
+                settingControls.add(new SettingControl(setting, sx, dy - 2, sw, 12, 'N'));
+                dy += 12;
+            } else if (setting instanceof ModuleSetting.EnumSetting<?> es) {
+                String val = String.valueOf(es.getValue());
+                int pillW = RenderUtil.textWidth(val) + 12;
+                RenderUtil.fillRoundedRect(ctx, x + PADDING, dy, pillW, 13, 3, ColorUtil.RC_SURFACE);
+                RenderUtil.drawText(ctx, val, x + PADDING + 6, dy + 3, ColorUtil.RC_ACCENT);
+                settingControls.add(new SettingControl(setting, x + PADDING, dy, pillW, 13, 'E'));
+                dy += 15;
+            } else if (setting instanceof ModuleSetting.ColorSetting cs) {
+                RenderUtil.fillRoundedRect(ctx, x + PADDING, dy, 26, 13, 3, 0xFF000000 | (cs.getValue() & 0xFFFFFF));
+                RenderUtil.drawBorder(ctx, x + PADDING, dy, 26, 13, 1, ColorUtil.RC_BORDER);
+                RenderUtil.drawText(ctx, "click to change", x + PADDING + 32, dy + 3, ColorUtil.RC_TEXT_MUTED);
+                settingControls.add(new SettingControl(setting, x + PADDING, dy, 26, 13, 'C'));
+                dy += 15;
             } else {
                 RenderUtil.drawText(ctx, "Value: " + setting.getValue(), x + PADDING, dy, ColorUtil.RC_ACCENT);
+                dy += 12;
             }
-            dy += 16;
+            dy += 8;
         }
+    }
+
+    private void renderSettingSlider(DrawContext ctx, int x, int y, int w, float pct) {
+        pct = Math.max(0f, Math.min(1f, pct));
+        ctx.fill(x, y + 3, x + w, y + 5, 0xFF404055);
+        ctx.fill(x, y + 3, x + (int) (pct * w), y + 5, ColorUtil.RC_ACCENT);
+        int tx = x + (int) (pct * w) - 2;
+        ctx.fill(tx, y, tx + 4, y + 8, 0xFFFFFFFF);
     }
 
     private List<Module> getFilteredModules() {
@@ -255,17 +304,60 @@ public class SettingsScreen extends Screen {
             }
         }
 
-        // Per-setting boolean toggles in the right-hand settings panel.
-        for (int i = 0; i < settingToggleRects.size(); i++) {
-            int[] r = settingToggleRects.get(i);
-            if (mx >= r[0] && mx <= r[0] + r[2] && my >= r[1] && my <= r[1] + r[3]) {
-                settingToggleRefs.get(i).toggle();
-                saveConfig();
-                return true;
-            }
+        // Interactive setting controls in the right-hand panel.
+        for (SettingControl c : settingControls) {
+            if (!c.hit(mx, my)) continue;
+            handleControlClick(c, mx);
+            if (c.kind != 'N') saveConfig(); // sliders save on release
+            return true;
         }
 
         return super.mouseClicked(click, shifted);
+    }
+
+    private void handleControlClick(SettingControl c, double mx) {
+        switch (c.kind) {
+            case 'B' -> ((BooleanSetting) c.setting).toggle();
+            case 'N' -> { draggingControl = c; setNumericFromX(c, mx); }
+            case 'E' -> ((ModuleSetting.EnumSetting<?>) c.setting).cycle();
+            case 'C' -> cycleColor((ModuleSetting.ColorSetting) c.setting);
+        }
+    }
+
+    private void setNumericFromX(SettingControl c, double mx) {
+        float pct = (float) Math.max(0, Math.min(1, (mx - c.x) / c.w));
+        if (c.setting instanceof ModuleSetting.IntSetting is) {
+            is.setValue(Math.round(is.getMin() + pct * (is.getMax() - is.getMin())));
+        } else if (c.setting instanceof ModuleSetting.FloatSetting fs) {
+            fs.setValue(fs.getMin() + pct * (fs.getMax() - fs.getMin()));
+        }
+    }
+
+    private void cycleColor(ModuleSetting.ColorSetting cs) {
+        int cur = cs.getValue() & 0xFFFFFF;
+        int idx = 0;
+        for (int i = 0; i < COLOR_PALETTE.length; i++) {
+            if ((COLOR_PALETTE[i] & 0xFFFFFF) == cur) { idx = i + 1; break; }
+        }
+        cs.setValue(COLOR_PALETTE[idx % COLOR_PALETTE.length]);
+    }
+
+    @Override
+    public boolean mouseDragged(Click click, double dx, double dy) {
+        if (draggingControl != null) {
+            setNumericFromX(draggingControl, click.x());
+            return true;
+        }
+        return super.mouseDragged(click, dx, dy);
+    }
+
+    @Override
+    public boolean mouseReleased(Click click) {
+        if (draggingControl != null) {
+            draggingControl = null;
+            saveConfig(); // persist the final slider value once
+        }
+        return super.mouseReleased(click);
     }
 
     @Override

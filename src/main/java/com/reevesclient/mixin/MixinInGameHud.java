@@ -31,6 +31,25 @@ public abstract class MixinInGameHud {
 
         GardenDashboardModule gdm = mm.get(GardenDashboardModule.class);
         if (gdm != null) gdm.parseActionBar(plain);
+
+        com.reevesclient.modules.skyblock.SkyblockStatsModule ssm =
+                mm.get(com.reevesclient.modules.skyblock.SkyblockStatsModule.class);
+        if (ssm != null) ssm.parseActionBar(plain);
+    }
+
+    /** Optionally hide vanilla health/hunger/armor bars when RPG bars are active. */
+    @Inject(method = "renderStatusBars(Lnet/minecraft/client/gui/DrawContext;)V",
+            at = @At("HEAD"), cancellable = true)
+    private void onRenderStatusBars(DrawContext ctx, CallbackInfo ci) {
+        if (ReevesClient.getInstance() == null) return;
+        var mm = ReevesClient.getInstance().getModuleManager();
+        if (mm == null) return;
+        com.reevesclient.modules.skyblock.SkyblockStatsModule ssm =
+                mm.get(com.reevesclient.modules.skyblock.SkyblockStatsModule.class);
+        if (ssm != null && ssm.isEnabled() && ssm.hideVanillaBars()
+                && com.reevesclient.core.util.HypixelUtil.isInSkyBlock()) {
+            ci.cancel();
+        }
     }
 
     /** Suppress vanilla crosshair rendering when the custom one is active. */

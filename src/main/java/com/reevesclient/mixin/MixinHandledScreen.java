@@ -97,6 +97,34 @@ public abstract class MixinHandledScreen {
         ctx.fill(x + 3, y + 1, x + 4, y + 3, 0xFFFFD54F);
     }
 
+    @Inject(method = "render(Lnet/minecraft/client/gui/DrawContext;IIF)V", at = @At("TAIL"))
+    private void reeves$chestValue(DrawContext ctx, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+        ReevesClient rc = ReevesClient.getInstance();
+        if (rc == null || rc.getModuleManager() == null) return;
+        var cv = rc.getModuleManager().get(com.reevesclient.modules.dungeons.DungeonChestValueModule.class);
+        if (cv == null || !cv.isEnabled()) return;
+
+        HandledScreen<?> self = (HandledScreen<?>) (Object) this;
+        if (!cv.isChestTitle(self.getTitle().getString())) return;
+
+        var econ = rc.getModuleManager().get(com.reevesclient.modules.skyblock.EconomyTooltipModule.class);
+        if (econ == null) return;
+
+        double total = 0;
+        for (Slot s : self.getScreenHandler().slots) {
+            ItemStack st = s.getStack();
+            if (st.isEmpty()) continue;
+            String id = com.reevesclient.core.util.HypixelUtil.getSkyblockId(st);
+            if (id.isEmpty()) continue;
+            total += econ.getSellPrice(id) * st.getCount();
+        }
+        if (total > 0) {
+            com.reevesclient.core.util.RenderUtil.drawText(ctx,
+                    "Chest value: ~" + com.reevesclient.core.util.Calculator.format(total) + " coins",
+                    8, 8, 0xFFFFD54F);
+        }
+    }
+
     private void reeves$notifyBlocked() {
         MinecraftClient mc = MinecraftClient.getInstance();
         if (mc.player != null) {
